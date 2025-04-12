@@ -1,0 +1,94 @@
+- farm
+  - batch across different server for maximum ram usage
+  - HWGW with 2 threads vs HWGW + HWGW
+  - formula hacking?
+  - hwgw as one process, spawn four and kill four
+  - return promise that wait stop running
+  - kill all on farm is killed
+    - atExit (unregister?)
+- faction work (determine when to switch from courses to faction work)
+- unlock faction
+  - hacker net
+  - travel c,i,j
+- time
+  - sleep till
+- overview
+  - ns lifecycle in react script
+  - use react
+  - calculate crime income
+  - conditional stat
+  - format and color
+  - little ui framework
+    - ticker
+      - 2 second
+      - gang update
+    - section
+    - progress bar?
+    - expandable group
+    - header
+    - value
+    - unit
+      - dollar
+      - percentage
+      - per second
+    - color
+      - money color
+    - alignment
+      - header left, value right
+      - header and value left
+      - header and value right
+      - center
+- hacknet
+  - limit server count, level, ram, cores, cache level (typed argument)
+- buy server
+  - auto shutdown on cant do any upgrade due to budget limit
+- save game statue as file (share between augmentation)
+- go strategy
+  - check analysis api will handle go rule
+  - add board to analysis
+  - should handle previous state (ns.go.getMoveHistory())
+  - four way same chain (my side) filter out move
+  - 旁邊有氣少的白旗
+  - fetch to simulate board
+  - 自戰鬥訓練
+    - ns.go.analysis.setTestingBoardState([])
+  - analysis strategy
+    - from valid moves
+    - exclude controlled empty node
+      - ns.go.analysis.getControlledEmptyNodes(ns.go.getBoardState())
+    - select 旁變只有 1 氣的 chain (緊氣)
+      - ns.go.analysis.getLiberties(ns.go.getBoardState()) // 氣
+      - ns.go.analysis.getChains() // 連 洞
+    - close to center
+- backdoor in,at
+- metrics service
+  - port to receive data
+  - cct solved / time
+- hacknet
+  - the hash production formula from github
+- dashboard
+  - hacknet
+    - number of hacknet server
+    - hashes
+    - h/s
+- purchase home ram/core
+- purchase augmentation `NeuroFlux Governor` should decide by faction favor or un-purchased augmentation count
+- focus
+  - module that handle all focus(work, bladeburner, crime, study...)
+    - crime for money
+    - crime for karma and kill (join gang)
+    - kill 30 people
+    - study until gang complete
+    - bladeburner
+- gang
+  - install augmentation for members when discount is 99%+
+  - assigning task should not depend on member status
+    - if wanted level penalty is less than 5%
+      - select max respect task
+      - select most respect that wanted level gain is still negative
+- channel
+  - message broker that control topic capacity
+- bladeburner
+  - dashboard show operation time reduce%
+- rm
+  - tab to extend *

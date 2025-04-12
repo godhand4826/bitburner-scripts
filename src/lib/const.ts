@@ -1,0 +1,10 @@
+export const k = 1e3 // thousand
+export const m = 1e6 // million
+export const b = 1e9 // billion
+export const t = 1e12 // trillion
+export const q = 1e15 // quadrillion
+export const Q = 1e18 // quintillion
+export const s = 1e21 // sextillion
+export const S = 1e24 // septillion
+export const o = 1e27 // octillion
+export const n = 1e30 // nonillion

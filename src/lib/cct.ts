@@ -494,7 +494,7 @@ export function proper2ColoringOfAGraph([n, edges]: [number, number[][]]) {
 }
 
 export function compressionIRLECompression(s: string) {
-  const runs = [] as [number, string][];
+  const runs: [number, string][] = []
   for (const c of s) {
     if (runs.length > 0 && runs[runs.length - 1][1] === c && runs[runs.length - 1][0] < 9) {
       runs[runs.length - 1][0]++;

@@ -6,8 +6,11 @@ import { run as runHacknet } from './hacknet'
 import { run as runServer } from './server'
 import { run as runGang } from './gang'
 import { run as runFaction } from './faction'
+import { ready } from './lib/cdn'
 
 export async function main(ns: NS): Promise<void> {
+  await ready()
+
   pkill(ns)
   syncScripts(ns)
 

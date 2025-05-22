@@ -2,7 +2,12 @@ import { GoOpponent, NS } from '@ns';
 import { disableLogs } from './log';
 
 export async function play(ns: NS, debug = false): Promise<boolean> {
-    let result;
+    let result: {
+        type: "move" | "pass" | "gameOver";
+        x: number | null;
+        y: number | null;
+    };
+
     do {
         // waiting for my turn
         await ns.go.opponentNextTurn()
@@ -38,7 +43,7 @@ export async function play(ns: NS, debug = false): Promise<boolean> {
         }
 
         // end game if already winning to settle the game
-        if (result?.type == 'pass' && ns.go.getGameState().blackScore > ns.go.getGameState().whiteScore) {
+        if (result.type == 'pass' && ns.go.getGameState().blackScore > ns.go.getGameState().whiteScore) {
             result = await ns.go.passTurn()
         }
     } while (!isGameEnd(ns))
@@ -107,7 +112,7 @@ export async function calculateNextMoves(ns: NS, debug = false): Promise<number[
     // calculate the best move
     const moveInfo = Array(boardSize).fill(null)
         .map(() => Array(boardSize).fill({ kill: 0, escape: 0, reduceLiberty: 0, extendLiberty: 0 }))
-    const moves = []
+    const moves: number[][] = []
     for (let x = 0; x < boardSize; x++) {
         for (let y = 0; y < boardSize; y++) {
             if (isValidMoves[x][y]) {

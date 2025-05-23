@@ -86,6 +86,10 @@
     - if wanted level penalty is less than 5%
       - select max respect task
       - select most respect that wanted level gain is still negative
+- focus
+  - train for combat level
+- backdoor all toast
+- nuked all toast
 - channel
   - message broker that control topic capacity
 - bladeburner

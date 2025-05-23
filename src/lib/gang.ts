@@ -108,7 +108,7 @@ export function autoSetMemberTask(ns: NS) {
             const gainDelta = nextGain - currentGain
             const nextTotalGain = currentTotalGain + gainDelta
 
-            return nextTotalGain <= 0
+            return nextTotalGain <= 0 || getWantedPenalty(ns) > -0.02
         })
 
         setMemberTask(ns, m, task ?? '')

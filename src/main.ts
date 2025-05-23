@@ -23,7 +23,7 @@ export async function main(ns: NS): Promise<void> {
   ns.run('nuke.js')
   ns.run('farm.js')
   ns.run('cct.js')
-  runHacknet(ns, 21 * m, 0 * 500 * m, 0)
+  runHacknet(ns, 30 * m, 0 * 500 * m, 0)
   ns.run('go.js')
   runFaction(ns, 3)
   runStock(ns, 250 * m)

@@ -7,7 +7,7 @@ export function autoPurchaseNode(ns: NS, budgetLimit = Infinity, preservedMoney 
         ns.hacknet.getPurchaseNodeCost() <= getBudget(ns, budgetLimit, preservedMoney) &&
         (index = ns.hacknet.purchaseNode()) != -1
     ) {
-        ns.tprint(`You have purchased hacknet-server-${index}`)
+        ns.toast(`You have purchased hacknet-server-${index}`)
     }
 }
 
@@ -17,7 +17,7 @@ export function autoUpgradeLevel(ns: NS, budgetLimit = Infinity, preservedMoney 
             ns.hacknet.getLevelUpgradeCost(i) <= getBudget(ns, budgetLimit, preservedMoney) &&
             ns.hacknet.upgradeLevel(i)
         ) {
-            ns.tprint(`hacknet-server-${i} level upgraded to ${ns.hacknet.getNodeStats(i).level}`)
+            ns.toast(`hacknet-server-${i} level upgraded to ${ns.hacknet.getNodeStats(i).level}`)
         }
     }
 }
@@ -28,7 +28,7 @@ export function autoUpgradeRam(ns: NS, budgetLimit = Infinity, preservedMoney = 
             ns.hacknet.getRamUpgradeCost(i) <= getBudget(ns, budgetLimit, preservedMoney) &&
             ns.hacknet.upgradeRam(i)
         ) {
-            ns.tprint(`hacknet-server-${i} RAM upgraded to ${ns.formatRam(ns.hacknet.getNodeStats(i).ram)}`)
+            ns.toast(`hacknet-server-${i} RAM upgraded to ${ns.formatRam(ns.hacknet.getNodeStats(i).ram)}`)
         }
     }
 }
@@ -39,7 +39,7 @@ export function autoUpgradeCore(ns: NS, budgetLimit = Infinity, preservedMoney =
             ns.hacknet.getCoreUpgradeCost(i) <= getBudget(ns, budgetLimit, preservedMoney) &&
             ns.hacknet.upgradeCore(i)
         ) {
-            ns.tprint(`hacknet-server-${i} cores upgraded to ${ns.hacknet.getNodeStats(i).cores}`)
+            ns.toast(`hacknet-server-${i} cores upgraded to ${ns.hacknet.getNodeStats(i).cores}`)
         }
     }
 }
@@ -50,7 +50,7 @@ export function autoUpgradeCache(ns: NS, budgetLimit = Infinity, preservedMoney 
             ns.hacknet.getCacheUpgradeCost(i) <= getBudget(ns, budgetLimit, preservedMoney) &&
             ns.hacknet.upgradeCache(i)
         ) {
-            ns.tprint(`hacknet-server-${i} cache level upgraded to ${ns.hacknet.getNodeStats(i).cache}`)
+            ns.toast(`hacknet-server-${i} cache level upgraded to ${ns.hacknet.getNodeStats(i).cache}`)
         }
     }
 }

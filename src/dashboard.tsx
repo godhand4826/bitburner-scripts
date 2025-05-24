@@ -273,7 +273,7 @@ export function ProgressBar({
   return <div style={{ marginLeft: '1em' }}>{bar}</div>
 }
 
-export function Section({ title, children, opened = true }: {
+export function Section({ title, children, opened = false }: {
   title: string,
   children: React.ReactNode
   opened?: boolean

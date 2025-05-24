@@ -15,6 +15,6 @@ export function nuke(ns: NS, host: string) {
     (server.openPortCount ?? 0) >= (server.numOpenPortsRequired ?? Infinity)
   ) {
     ns.nuke(host)
-    ns.tprint(`Successfully nuked ${host}`)
+    ns.toast(`Successfully nuked ${host}`)
   }
 }

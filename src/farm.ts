@@ -24,7 +24,7 @@ export async function HWGW(ns: NS): Promise<void> {
     const completeAt = now() + batchTime
 
     if (batchTime > 5000) {
-      ns.toast(`Batch hacking ${target} in ${ns.tFormat(batchTime)}`, 'info')
+      ns.toast(`Batch hacking ${target} will complete in ${ns.tFormat(batchTime)} at ${formatDate(completeAt)}`, 'info')
     }
     ns.print(`Batch hacking ${target} will complete in ${ns.tFormat(batchTime)} at ${formatDate(completeAt)}`)
 
@@ -38,5 +38,6 @@ export async function HWGW(ns: NS): Promise<void> {
 
     ns.print(`Complete time is delayed by ${ns.tFormat(now() - completeAt, true)}`);
     await ns.asleep(1200) // 1120
+    ns.toast(`Batch hacking ${target} completed!`)
   }
 }

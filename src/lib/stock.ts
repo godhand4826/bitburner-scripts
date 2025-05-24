@@ -53,7 +53,7 @@ export function sellAll(ns: NS, sym: string) {
     const profit = sharesLong * (sellPrice - avgLongPrice)
 
     if (sharesLong > 0) {
-        ns.toast(`Sell max ${sym} for ${ns.formatNumber(profit)}`, profit >= 0 ? 'success' : 'warning')
+        ns.toast(`Sell max ${sym} for ${ns.formatNumber(profit)}`, 'info')
     }
 }
 

@@ -4,7 +4,7 @@ import { pkill } from './remote';
 export function autoJoinFaction(ns: NS) {
     for (const faction of ns.singularity.checkFactionInvitations()) {
         if (ns.singularity.joinFaction(faction)) {
-            ns.tprint(`You have joined the '${faction}' faction`)
+            ns.toast(`You have joined the '${faction}' faction`)
         }
     }
 }

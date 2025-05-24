@@ -6,7 +6,7 @@ export async function main(ns: NS): Promise<void> {
 
     while (!ns.hasTorRouter()) {
         if (ns.singularity.purchaseTor()) {
-            ns.tprint(`You have purchased TOR Router`)
+            ns.toast(`You have purchased TOR Router`)
 
             break
         }
@@ -22,7 +22,7 @@ export async function main(ns: NS): Promise<void> {
 
         for (const program of programs) {
             if (ns.singularity.purchaseProgram(program)) {
-                ns.tprint(`You have purchased the ${program} program`)
+                ns.toast(`You have purchased the ${program} program`)
             }
         }
 

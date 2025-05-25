@@ -119,14 +119,14 @@ export function Hack({ ns }: { ns: NS }) {
       const purchasedProgram = ns.singularity.getDarkwebPrograms().filter(program => ns.fileExists(program)).length
       const totalProgram = ns.singularity.getDarkwebPrograms().length
 
-      const rooted = list(ns, { onlyNuked: true }).length
+      const nuked = list(ns, { onlyNuked: true }).length
       const discovered = list(ns).length
       const backdoorInstalled = list(ns, { onlyBackdoorInstalled: true }).length
 
       return <>
         <Stat label='program' value={`${purchasedProgram} / ${totalProgram}`} />
-        <Stat label='root' value={`${rooted} / ${discovered}`} />
-        <Stat label='backdoor' value={`${backdoorInstalled} / ${rooted}`} />
+        <Stat label='nuked' value={`${nuked} / ${discovered}`} />
+        <Stat label='backdoor' value={`${backdoorInstalled} / ${discovered}`} />
       </>
     }} />
   </Section>

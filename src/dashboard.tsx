@@ -1,6 +1,6 @@
 import { NS } from '@ns';
 import React from './lib/react'
-import { formatDate, now, sleep } from './lib/time';
+import { forever, formatDate, now, sleep } from './lib/time';
 import { getHacknetHashRate, getHacknetProduction } from './lib/hacknet';
 import { ps } from './lib/remote';
 import { getMinChanceToWinClash, getWantedPenalty, moneyGainRate, respectGainRate, wantedLevelGainRate } from './lib/gang';
@@ -18,9 +18,7 @@ export async function main(ns: NS): Promise<void> {
   ns.clearLog()
   ns.printRaw(<Dashboard ns={ns} />)
 
-  for (; ;) {
-    await ns.asleep(24 * 60 * 60 * 1000)
-  }
+  await forever()
 }
 
 export function Dashboard({ ns }: { ns: NS }) {
@@ -66,8 +64,8 @@ export function Dashboard({ ns }: { ns: NS }) {
 }
 
 export function Time() {
-  return <TimeTicker interval={1000} render={() =>
-    <Stat label='time' value={formatDate(now())} />
+  return <TimeTicker interval={100} render={() =>
+    <Stat label='time' value={formatDate(now(), 'HH:mm:ss.S')} />
   } />
 }
 

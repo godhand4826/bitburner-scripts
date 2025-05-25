@@ -4,12 +4,15 @@ export function now(): number {
     return Date.now()
 }
 
-// hh:mm:ss
-export function formatDate(value: number): string {
+export function formatDate(value: number, format = 'HH:mm:ss'): string {
     const dateFns = loadModules().dateFns
-    return dateFns.format(new Date(value), 'HH:mm:ss')
+    return dateFns.format(new Date(value), format)
 }
 
 export function sleep(ms: number): Promise<number> {
     return new Promise((res) => setTimeout(() => res(ms), ms))
+}
+
+export function forever(): Promise<never> {
+    return new Promise(() => { /* never resolve */ })
 }

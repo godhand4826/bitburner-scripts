@@ -1,6 +1,6 @@
 import { NS } from '@ns';
 import React from './lib/react'
-import { forever, formatDate, now, sleep } from './lib/time';
+import { forever, formatTime, now, sleep } from './lib/time';
 import { getHacknetHashRate, getHacknetProduction } from './lib/hacknet';
 import { ps } from './lib/remote';
 import { getMinChanceToWinClash, getWantedPenalty, moneyGainRate, respectGainRate, wantedLevelGainRate } from './lib/gang';
@@ -65,7 +65,7 @@ export function Dashboard({ ns }: { ns: NS }) {
 
 export function Time() {
   return <TimeTicker interval={100} render={() =>
-    <Stat label='time' value={formatDate(now(), 'HH:mm:ss.S')} />
+    <Stat label='time' value={formatTime(now(), 'HH:mm:ss.S')} />
   } />
 }
 

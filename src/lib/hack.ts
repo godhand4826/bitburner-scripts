@@ -2,7 +2,7 @@ import { AutocompleteData, BasicHGWOptions, NS, ScriptArg } from '@ns';
 import { Flags } from './flag';
 import { maxThreads } from './ram';
 import { isMyMachine } from './server';
-import { formatDate, now } from './time';
+import { formatTime, now } from './time';
 
 export const hackScript = 'hack.js'
 export const growScript = 'grow.js'
@@ -49,16 +49,16 @@ export async function execHWGW(ns: NS, host: string, target: string, limitRam = 
     //             |== weaken ==========================|
     const execAt = now()
     ns.exec(hackScript, host, { threads },
-        formatDate(execAt + weakenTime - 1 * paddingTime),
+        formatTime(execAt + weakenTime - 1 * paddingTime),
         ...toFlags({ host: target, additionalMsec: (weakenTime - 1 * paddingTime) - hackTime }))
     ns.exec(weakenScript, host, { threads },
-        formatDate(execAt + weakenTime + 0 * paddingTime),
+        formatTime(execAt + weakenTime + 0 * paddingTime),
         ...toFlags({ host: target, additionalMsec: (weakenTime + 0 * paddingTime) - weakenTime }))
     ns.exec(growScript, host, { threads },
-        formatDate(execAt + weakenTime + 1 * paddingTime),
+        formatTime(execAt + weakenTime + 1 * paddingTime),
         ...toFlags({ host: target, additionalMsec: (weakenTime + 1 * paddingTime) - growTime }))
     ns.exec(weakenScript, host, { threads },
-        formatDate(execAt + weakenTime + 2 * paddingTime),
+        formatTime(execAt + weakenTime + 2 * paddingTime),
         ...toFlags({ host: target, additionalMsec: (weakenTime + 2 * paddingTime) - weakenTime }))
     await ns.sleep(4 * paddingTime)
 

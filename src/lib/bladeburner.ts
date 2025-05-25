@@ -1,5 +1,5 @@
 import { BladeburnerActionName, BladeburnerActionType, BladeburnerSkillName, NS } from '@ns';
-import { formatDate, now } from './time';
+import { formatTime, now } from './time';
 
 export const HighChaosThreshold = 50
 
@@ -74,7 +74,7 @@ export function setAction(ns: NS, name: BladeburnerActionName | `${BladeburnerAc
     if (ns.bladeburner.startAction(typ, name)) {
         if (typ == 'Black Operations') {
             ns.toast(`${name} will complete in ${ns.tFormat(opTime)}` +
-                ` at ${formatDate(now() + opTime)}`,
+                ` at ${formatTime(now() + opTime)}`,
                 'info', opTime)
         }
     } else {

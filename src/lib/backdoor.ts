@@ -1,13 +1,13 @@
 import { NS } from '@ns';
 import { exec } from './remote';
-import { formatDate, now } from './time';
+import { formatTime, now } from './time';
 
 export async function backdoor(ns: NS, host: string) {
     await exec(ns, host, async () => {
         const backdoorTime = getBackdoorTime(ns, host)
         ns.toast(`Installing backdoor on ${host} will complete` +
             ` in ${ns.tFormat(backdoorTime, true)}` +
-            ` at ${formatDate(now() + backdoorTime)}`,
+            ` at ${formatTime(now() + backdoorTime)}`,
             'info', backdoorTime)
 
         await ns.singularity.installBackdoor()

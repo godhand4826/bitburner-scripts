@@ -4,7 +4,7 @@ export function now(): number {
     return Date.now()
 }
 
-export function formatDate(value: number, format = 'HH:mm:ss'): string {
+export function formatTime(value: number, format = 'HH:mm:ss'): string {
     const dateFns = loadModules().dateFns
     return dateFns.format(new Date(value), format)
 }

@@ -18,7 +18,7 @@ export async function main(ns: NS): Promise<void> {
     await integrationTest(ns)
   } else if (cmd == 'generate') {
     const typ = ns.args[1] as string
-    await createDummyContract(ns, typ)
+    ns.tprintf(`${typ}: home ${createDummyContract(ns, typ)}`)
   } else if (cmd == 'list') {
     ls(ns, '.cct').forEach(cct => ns.tprint(
       `${ns.codingcontract.getContractType(cct.name, cct.host)}: ${cct.host} ${cct.name}`))

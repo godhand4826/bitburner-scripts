@@ -51,6 +51,7 @@ export async function main(ns: NS): Promise<void> {
   // findAllValidMathExpressions(['474148792091',-100]) // 50s
   // findAllValidMathExpressions(['5188213441',-21]) // 3s
   // findAllValidMathExpressions(['364036962035',23]) // 4m 3.9s
+  // findAllValidMathExpressions(["866216325436",-74]) // 58s
 
 
   // const elapsed = Date.now() - start

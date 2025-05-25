@@ -1,59 +1,83 @@
 import { NS } from '@ns';
+import { now } from './time';
 
-export function solve(ns: NS, host: string, cct: string) {
+export function solve(ns: NS, host: string, cct: string): boolean {
   const contractType = ns.codingcontract.getContractType(cct, host);
   const contractData = ns.codingcontract.getData(cct, host);
-  const fn = getSolverFn(ns, contractType);
-  if (!fn) {
+
+  if (!isSolvable(ns, contractType)) {
     ns.toast(`No solution for '${contractType}' ${host} ${cct}`, 'warning');
-    return;
+    return false;
   }
 
-  ns.tprint(`Solving '${contractType}' ${host} ${cct}`);
-  const start = Date.now()
+  // Save contract description before attempting, as it may destruct (delete itself) after being attempted
+  const cctDescription = formatContract(ns, host, cct)
+
+  ns.toast(`Solving '${contractType}' ${host} ${cct}`);
+  const start = now()
+  const fn = getSolverFn(ns, contractType);
   const answer = fn(contractData);
-  const elapsed = Date.now() - start
-  if (elapsed >= 100) {
-    show(ns, host, cct)
-    ns.tprint(`Solver ran slowly: ${ns.tFormat(elapsed, true)}`);
+  const reward = ns.codingcontract.attempt(answer, cct, host);
+  const elapsed = now() - start
+
+  const isSuccess = typeof reward === 'string' && reward.length > 0;
+  const isSlow = elapsed >= 100;
+
+  if (!isSuccess || isSlow) {
+    ns.tprint(cctDescription);
+
+    if (isSlow) {
+      ns.tprint(`Solver ran slowly: ${ns.tFormat(elapsed, true)}`);
+    }
   }
 
-  const reward = ns.codingcontract.attempt(answer, cct, host);
-  if (reward) {
-    ns.tprint(`Contract solved successfully! ${reward}`);
+  if (isSuccess) {
+    ns.toast(`Contract solved successfully! ${reward}`);
   } else {
-    show(ns, host, cct)
     ns.tprint(`Failed to solve contract. Your answer: ${answer}`);
   }
+  return isSuccess
 }
 
 export async function integrationTest(ns: NS) {
-  ns.tprint(`Integration test start`);
+  let total = 0;
+  let pass = 0;
+  for (const contractType of ns.codingcontract.getContractTypes()) {
+    if (!isSolvable(ns, contractType)) {
+      ns.tprint(`Skip '${contractType}' since no solver found`);
+      continue
+    }
 
-  createDummyContracts(ns);
+    const cct = createDummyContract(ns, contractType)
+    const solved = solve(ns, 'home', cct);
 
-  for (const cct of ns.ls('home', '.cct')) {
-    solve(ns, 'home', cct);
+    pass += solved ? 1 : 0;
+    total += 1;
+
     await ns.sleep(200);
   }
 
-  ns.tprint(`Integration test complete`);
+  ns.tprint(`cct test complete (${pass}/${total})`)
 }
 
-export function createDummyContracts(ns: NS) {
-  ns.tprint(`create dummy contracts for each contract type`)
-  ns.codingcontract.getContractTypes().forEach(t => createDummyContract(ns, t))
-}
-
-export function createDummyContract(ns: NS, t: string) {
+export function createDummyContract(ns: NS, t: string): string {
   const cct = ns.codingcontract.createDummyContract(t)
-  ns.tprint(`created dummy contract of type ${t}: ${cct}`)
+  ns.tprint(`dummy contract '${t}' home ${cct} created`)
+  return cct
 }
 
 export function show(ns: NS, host: string, cct: string) {
-  ns.tprint(`'${ns.codingcontract.getContractType(cct, host)}' ${host} ${cct}`)
-  ns.tprint(ns.codingcontract.getDescription(cct, host))
-  ns.tprint(ns.codingcontract.getData(cct, host))
+  ns.tprint(formatContract(ns, host, cct));
+}
+
+export function formatContract(ns: NS, host: string, cct: string) {
+  return `'${ns.codingcontract.getContractType(cct, host)}' ${host} ${cct}:\n` +
+    `${ns.codingcontract.getDescription(cct, host)}\n` +
+    `Data: ${ns.codingcontract.getData(cct, host)}`;
+}
+
+export function isSolvable(ns: NS, contractType: string): boolean {
+  return !!getSolverFn(ns, contractType);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

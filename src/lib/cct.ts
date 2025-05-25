@@ -6,7 +6,7 @@ export function solve(ns: NS, host: string, cct: string): boolean {
   const contractData = ns.codingcontract.getData(cct, host);
 
   if (!isSolvable(ns, contractType)) {
-    ns.toast(`No solution for '${contractType}' ${host} ${cct}`, 'warning');
+    ns.toast(`No solver for '${contractType}' ${host} ${cct}`, 'warning');
     return false;
   }
 
@@ -57,7 +57,7 @@ export async function integrationTest(ns: NS) {
     await ns.sleep(200);
   }
 
-  ns.tprint(`cct test complete (${pass}/${total})`)
+  ns.tprint(`cct integration test complete (${pass}/${total})`)
 }
 
 export function createDummyContract(ns: NS, t: string): string {

@@ -1,4 +1,5 @@
 import { BladeburnerActionName, BladeburnerActionType, BladeburnerSkillName, NS } from '@ns';
+import { formatDate, now } from './time';
 
 export const HighChaosThreshold = 50
 
@@ -23,7 +24,9 @@ export function upgradeSkills(ns: NS) {
     if (ns.bladeburner.getSkillLevel('Overclock') < 90) {
         upgradeSkill(ns, 'Overclock')
     } else {
-        ns.bladeburner.getSkillNames().forEach(skill => upgradeSkill(ns, skill))
+        ns.bladeburner.getSkillNames()
+            .sort((a, b) => ns.bladeburner.getSkillLevel(a) - ns.bladeburner.getSkillLevel(b))
+            .forEach(skill => upgradeSkill(ns, skill))
     }
 }
 
@@ -31,7 +34,7 @@ export function upgradeSkill(ns: NS, skill: BladeburnerSkillName | `${Bladeburne
     if (
         ns.bladeburner.getSkillUpgradeCost(skill) <= ns.bladeburner.getSkillPoints() &&
         ns.bladeburner.upgradeSkill(skill)) {
-        ns.tprint(`${skill} level upgraded to ${ns.bladeburner.getSkillLevel(skill)}`)
+        ns.toast(`${skill} level upgraded to ${ns.bladeburner.getSkillLevel(skill)}`)
     }
 }
 
@@ -66,10 +69,13 @@ export function setAction(ns: NS, name: BladeburnerActionName | `${BladeburnerAc
         return
     }
 
-    const t = getActionType(name)
-    if (ns.bladeburner.startAction(t, name)) {
-        if (t == 'Black Operations') {
-            ns.tprint(`Start ${t}: ${name}`)
+    const typ = getActionType(name)
+    const opTime = getActionTime(ns, name)
+    if (ns.bladeburner.startAction(typ, name)) {
+        if (typ == 'Black Operations') {
+            ns.toast(`${name} will complete in ${ns.tFormat(opTime)}` +
+                ` at ${formatDate(now() + opTime)}`,
+                'info', opTime)
         }
     } else {
         ns.tprint(`Failed to set action ${name}`)
@@ -112,6 +118,10 @@ export function getNextBlackOpRequiredRank(ns: NS): number {
 
 export function getNextBlackOpName(ns: NS): BladeburnerActionName | `${BladeburnerActionName}` | '' {
     return ns.bladeburner.getNextBlackOp()?.name ?? ''
+}
+
+export function getActionTime(ns: NS, name: BladeburnerActionName | `${BladeburnerActionName}`): number {
+    return ns.bladeburner.getActionTime(getActionType(name), name)
 }
 
 export function getActionType(name: BladeburnerActionName | `${BladeburnerActionName}`): BladeburnerActionType | `${BladeburnerActionType}` {

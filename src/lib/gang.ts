@@ -30,7 +30,7 @@ export function autoAscendMember(ns: NS, ratio = 1.2) {
 
 export function ascendMember(ns: NS, member: string) {
     if (ns.gang.ascendMember(member)) {
-        ns.tprint(`Ascended ${member}`)
+        ns.toast(`Ascended ${member}`)
     }
 }
 

@@ -11,6 +11,8 @@ export async function main(ns: NS): Promise<void> {
 }
 
 export async function HWGW(ns: NS): Promise<void> {
+  const batchPaddingTime = 1200 // should be grate or equal than 1120 in practice experience
+
   for (; ;) {
     const targets = list(ns, { onlyNuked: true })
       .map(host => [host, computeEarningsVelocity(ns, host)] as [string, number])
@@ -23,10 +25,8 @@ export async function HWGW(ns: NS): Promise<void> {
     const batchTime = getHWGWTime(ns, target)
     const completeAt = now() + batchTime
 
-    if (batchTime > 5000) {
-      ns.toast(`Batch hacking ${target} will complete in ${ns.tFormat(batchTime)} at ${formatDate(completeAt)}`, 'info')
-    }
     ns.print(`Batch hacking ${target} will complete in ${ns.tFormat(batchTime)} at ${formatDate(completeAt)}`)
+    ns.toast(`Batch hacking ${target} will complete in ${ns.tFormat(batchTime)} at ${formatDate(completeAt)}`, 'info', batchTime + 2000)
 
     let batches = 0
     for (const host of list(ns, { onlyNuked: true, includePurchased: true, includeHome: true })) {
@@ -34,10 +34,11 @@ export async function HWGW(ns: NS): Promise<void> {
       const isDeployed = await execHWGW(ns, host, target, Infinity, preservedRam)
       batches += isDeployed ? 1 : 0;
     }
-    await ns.asleep(batchTime - (batches * 4 * paddingTime))
 
+    await ns.asleep(batchTime - (batches * 4 * paddingTime))
     ns.print(`Complete time is delayed by ${ns.tFormat(now() - completeAt, true)}`);
-    await ns.asleep(1200) // 1120
     ns.toast(`Batch hacking ${target} completed!`)
+
+    await ns.asleep(batchPaddingTime)
   }
 }

@@ -18,14 +18,15 @@ export async function main(ns: NS): Promise<void> {
     }
 
     ns.atExit(() => closeAllPosition(ns))
-    let ticks = 0
-    for (; ;) {
+
+    for (let ticks = 0; ; ticks++) {
         autoClosePositions(ns)
         autoCreatePositions(ns, preservedMoney)
 
-        if (++ticks % 60 == 0) {
+        if (ticks % 60 == 0) {
             // release money awhile for spend
             closeAllPosition(ns)
+            ns.toast('close all position for 10 seconds', 'info', 10 * 1000)
             await ns.asleep(10 * 1000)
         }
 

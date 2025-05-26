@@ -64,9 +64,10 @@ export function Dashboard({ ns }: { ns: NS }) {
 }
 
 export function Time() {
-  return <TimeTicker interval={100} render={() =>
-    <Stat label='time' value={formatTime(now(), 'HH:mm:ss.S')} />
-  } />
+  return <TimeTicker interval={100} render={() => <>
+    <Stat label='time' value={formatTime(now())} />
+    <Stat label='liveness' value={<ProgressBar value={(Math.sin(now() / 2000 * Math.PI * 2) + 1) / 2} />} />
+  </>} />
 }
 
 export function Home({ ns }: { ns: NS }) {
@@ -76,7 +77,7 @@ export function Home({ ns }: { ns: NS }) {
     const maxRam = ns.getServerMaxRam('home')
     return <Section title={`Home`} >
       <Stat label='process' value={process.length} />
-      <Stat label='ram' value={<ProgressBar value={usedRam / maxRam} width={20} />} />
+      <Stat label='ram' value={<ProgressBar value={usedRam / maxRam} />} />
     </Section>
   }} />
 }
@@ -254,7 +255,7 @@ export function Ticker({
 
 export function ProgressBar({
   value,
-  width = 40,
+  width = 25,
 }: {
   value: number
   width?: number
@@ -263,7 +264,7 @@ export function ProgressBar({
   const emptyChar = '-'
 
   const clamped = Math.min(Math.max(value, 0), 1)
-  const filled = Math.floor(clamped * width)
+  const filled = Math.round(clamped * width)
   const empty = width - filled
 
   const bar = `[${fillChar.repeat(filled)}${emptyChar.repeat(empty)}]`

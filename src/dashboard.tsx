@@ -66,7 +66,7 @@ export function Dashboard({ ns }: { ns: NS }) {
 export function Time() {
   return <TimeTicker interval={100} render={() => <>
     <Stat label='time' value={formatTime(now())} />
-    <Stat label='liveness' value={<ProgressBar value={(Math.sin(now() / 2000 * Math.PI * 2) + 1) / 2} />} />
+    <Stat label='liveness' value={<ProgressBar value={(Math.sin(now() / 5000 * Math.PI * 2) + 1) / 2} />} />
   </>} />
 }
 

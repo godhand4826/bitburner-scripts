@@ -93,6 +93,14 @@ export function getTotalPosition(ns: NS): number {
     return money
 }
 
+export function getTotalAsset(ns: NS): number {
+    const cash = getBudget(ns)
+    const stock = ns.stock.hasTIXAPIAccess() ? getTotalPosition(ns) : 0
+    const asset = cash + stock
+
+    return asset
+}
+
 export function closeAllPosition(ns: NS) {
     ns.stock.getSymbols().forEach(sym => sellAll(ns, sym))
 }

@@ -16,6 +16,6 @@ export async function main(ns: NS): Promise<void> {
         autoPurchaseAugmentation(ns)
         autoInstallAugmentations(ns, queuedLimit)
 
-        await ns.sleep(10 * 1000)
+        await ns.sleep(2000)
     }
 }

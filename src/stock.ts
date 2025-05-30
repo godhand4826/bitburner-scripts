@@ -1,6 +1,9 @@
 import { NS } from '@ns';
 import { purchaseStockAPIs, closeAllPosition, isFullyPurchasedStockAPIs, autoClosePositions, autoCreatePositions } from './lib/stock'
 import { disableLogs } from './lib/log';
+import { formatTime, now } from './lib/time';
+import { getBudget } from './lib/money';
+import { t } from './lib/const';
 
 export function run(ns: NS, preservedMoney = 250_000_000) {
     ns.run('stock.js', 1, preservedMoney)
@@ -19,16 +22,21 @@ export async function main(ns: NS): Promise<void> {
 
     ns.atExit(() => closeAllPosition(ns))
 
-    for (let ticks = 0; ; ticks++) {
+    const releaseInterval = 60 * 1000;
+    const releaseTime = 5 * 1000;
+    let nextReleaseAt = now();
+    for (; ;) {
+        // release money awhile for spend
+        if (now() >= nextReleaseAt && getBudget(ns) < 1 * t) {
+            ns.toast(`release all position for ${ns.tFormat(releaseTime)}`, 'info', releaseTime + 2000)
+            closeAllPosition(ns)
+            nextReleaseAt = now() + releaseInterval
+            await ns.asleep(releaseTime)
+            ns.toast(`next position release in ${ns.tFormat(releaseInterval)} at ${formatTime(nextReleaseAt)}`, 'info', nextReleaseAt - now() + 2000)
+        }
+
         autoClosePositions(ns)
         autoCreatePositions(ns, preservedMoney)
-
-        if (ticks % 60 == 0) {
-            // release money awhile for spend
-            closeAllPosition(ns)
-            ns.toast('close all position for 10 seconds', 'info', 10 * 1000)
-            await ns.asleep(10 * 1000)
-        }
 
         await ns.stock.nextUpdate()
     }

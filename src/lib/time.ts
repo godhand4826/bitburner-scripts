@@ -16,3 +16,7 @@ export function sleep(ms: number): Promise<number> {
 export function forever(): Promise<never> {
     return new Promise(() => { /* never resolve */ })
 }
+
+export function till(awakeAt: number): Promise<number> {
+    return sleep(awakeAt - now())
+}

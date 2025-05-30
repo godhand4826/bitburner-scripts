@@ -30,6 +30,10 @@ export function upgradeSkills(ns: NS) {
     }
 }
 
+export function getOperationTimeReduction(ns: NS): number {
+    return ns.bladeburner.getSkillLevel('Overclock') * 0.01;
+}
+
 export function upgradeSkill(ns: NS, skill: BladeburnerSkillName | `${BladeburnerSkillName}`) {
     if (
         ns.bladeburner.getSkillUpgradeCost(skill) <= ns.bladeburner.getSkillPoints() &&

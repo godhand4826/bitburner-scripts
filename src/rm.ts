@@ -2,10 +2,10 @@ import { AutocompleteData, NS, ScriptArg } from '@ns'
 import { ls, RemoteFile, rm } from './lib/remote'
 
 export async function main(ns: NS): Promise<void> {
-    const substring = (ns.args[0] ?? '.js') as string
+    const substring = (ns.args[0] ?? '') as string
     const force = ns.flags([['f', false]]).f as boolean
 
-    const remoteFiles = ls(ns, substring)
+    const remoteFiles = ls(ns, substring).filter(rf => rf.name.endsWith('.js'))
     if (remoteFiles.length == 0) {
         ns.tprintf('No files found')
         return

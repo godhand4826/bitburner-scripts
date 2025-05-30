@@ -6,9 +6,9 @@ import { ps } from './lib/remote';
 import { getMinChanceToWinClash, getWantedPenalty, moneyGainRate, respectGainRate, wantedLevelGainRate } from './lib/gang';
 import { list } from './lib/host';
 import { getBonusPercent, getSafeCheats } from './lib/go';
-import { getNextBlackOpRequiredRank, getStaminaPercentage } from './lib/bladeburner';
+import { getNextBlackOpRequiredRank, getOperationTimeReduction, getStaminaPercentage } from './lib/bladeburner';
 import { getTotalPosition } from './lib/stock';
-import { getTotalAsset } from './lib/stock';
+import { getAsset } from './lib/stock';
 
 export async function main(ns: NS): Promise<void> {
   ns.disableLog('ALL')
@@ -52,7 +52,7 @@ export function Dashboard({ ns }: { ns: NS }) {
   }, []);
 
   return <div ref={divRef}>
-    <TotalAsset ns={ns} />
+    <Asset ns={ns} />
     <Time />
     <Home ns={ns} />
     <Income ns={ns} />
@@ -72,9 +72,9 @@ export function Time() {
   </>} />
 }
 
-export function TotalAsset({ ns }: { ns: NS }) {
+export function Asset({ ns }: { ns: NS }) {
   return <TimeTicker interval={1000} render={() =>
-    <Stat label='total asset' value={`$${ns.formatNumber(getTotalAsset(ns))}`} style={MoneyStyle} />
+    <Stat label='asset' value={`$${ns.formatNumber(getAsset(ns))}`} style={MoneyStyle} />
   } />
 }
 
@@ -159,6 +159,7 @@ export function Hacknet({ ns }: { ns: NS }) {
   return <TimeTicker interval={2000} render={() =>
     <Section title='Hacknet'>
       <Stat label='nodes' value={`${ns.hacknet.numNodes()} / ${ns.hacknet.maxNumNodes()}`} />
+      <Stat label='hash' value={`${ns.formatNumber(ns.hacknet.numHashes())} / ${ns.formatNumber(ns.hacknet.hashCapacity())}`} />
       <Stat label='hash rate' value={`${ns.formatNumber(getHacknetHashRate(ns))} h / s`} />
     </Section>
   } />
@@ -213,6 +214,7 @@ export function Bladeburner({ ns }: { ns: NS }) {
         <Stat label='stamina' value={`${ns.formatNumber(current)} / ${ns.formatNumber(max)}`} />
         <Stat label='stamina rate' value={`${ns.formatPercent(getStaminaPercentage(ns))}`} />
         <Stat label='chaos' value={`${ns.formatNumber(ns.bladeburner.getCityChaos(ns.bladeburner.getCity()))}`} />
+        <Stat label='operation time reduction rate' value={`${ns.formatPercent(getOperationTimeReduction(ns))}`} />
       </Section>
     }}
   />

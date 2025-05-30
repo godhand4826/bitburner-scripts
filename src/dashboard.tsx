@@ -8,7 +8,7 @@ import { list } from './lib/host';
 import { getBonusPercent, getSafeCheats } from './lib/go';
 import { getNextBlackOpRequiredRank, getOperationTimeReduction, getStaminaPercentage } from './lib/bladeburner';
 import { getTotalPosition } from './lib/stock';
-import { getAsset } from './lib/stock';
+import { getAssets } from './lib/stock';
 
 export async function main(ns: NS): Promise<void> {
   ns.disableLog('ALL')
@@ -52,7 +52,7 @@ export function Dashboard({ ns }: { ns: NS }) {
   }, []);
 
   return <div ref={divRef}>
-    <Asset ns={ns} />
+    <Assets ns={ns} />
     <Time />
     <Home ns={ns} />
     <Income ns={ns} />
@@ -72,9 +72,9 @@ export function Time() {
   </>} />
 }
 
-export function Asset({ ns }: { ns: NS }) {
+export function Assets({ ns }: { ns: NS }) {
   return <TimeTicker interval={1000} render={() =>
-    <Stat label='asset' value={`$${ns.formatNumber(getAsset(ns))}`} style={MoneyStyle} />
+    <Stat label='assets' value={`$${ns.formatNumber(getAssets(ns))}`} style={MoneyStyle} />
   } />
 }
 

@@ -93,7 +93,7 @@ export function getTotalPosition(ns: NS): number {
     return money
 }
 
-export function getAsset(ns: NS): number {
+export function getAssets(ns: NS): number {
     const cash = getBudget(ns)
     const stock = ns.stock.hasTIXAPIAccess() ? getTotalPosition(ns) : 0
     const asset = cash + stock

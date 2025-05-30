@@ -7,7 +7,7 @@ import { getMinChanceToWinClash, getWantedPenalty, moneyGainRate, respectGainRat
 import { list } from './lib/host';
 import { getBonusPercent, getSafeCheats } from './lib/go';
 import { getNextBlackOpRequiredRank, getOperationTimeReduction, getStaminaPercentage } from './lib/bladeburner';
-import { getTotalPosition } from './lib/stock';
+import { getSymbols, getTotalPosition } from './lib/stock';
 import { getAssets } from './lib/stock';
 
 export async function main(ns: NS): Promise<void> {
@@ -54,14 +54,15 @@ export function Dashboard({ ns }: { ns: NS }) {
   return <div ref={divRef}>
     <Assets ns={ns} />
     <Time />
-    <Home ns={ns} />
-    <Income ns={ns} />
+    <Production ns={ns} />
     <Hack ns={ns} />
     <Hacknet ns={ns} />
-    <Hardware ns={ns} />
-    <IPvGO ns={ns} />
-    <Gang ns={ns} />
+    <Stock ns={ns} />
     <Bladeburner ns={ns} />
+    <Gang ns={ns} />
+    <IPvGO ns={ns} />
+    <Home ns={ns} />
+    <PurchasedServer ns={ns} />
   </div >
 }
 
@@ -84,41 +85,27 @@ export function Home({ ns }: { ns: NS }) {
     const usedRam = ns.getServerUsedRam('home')
     const maxRam = ns.getServerMaxRam('home')
     return <Section title={`Home`} >
+      <Stat label='ram' value={ns.formatRam(ns.getServerMaxRam('home'))} />
+      <Stat label='cores' value={ns.getServer('home').cpuCores} />
       <Stat label='process' value={process.length} />
-      <Stat label='ram' value={<ProgressBar value={usedRam / maxRam} />} />
+      <Stat label='ram usage' value={<ProgressBar value={usedRam / maxRam} />} />
     </Section>
   }} />
 }
 
-export function Income({ ns }: { ns: NS }) {
-  return <Section title='Income'>
+export function Production({ ns }: { ns: NS }) {
+  return <Section title='Production'>
     <TimeTicker interval={2000} render={() => {
       const farmIncome = ps(ns, 'farm.js').reduce((a, c) => a + ns.getScriptIncome(c.filename, c.host, ...c.args), 0)
+      const stockIncome = ps(ns, 'stock.js').reduce((a, c) => a + ns.getScriptIncome(c.filename, c.host, ...c.args), 0)
+
       return <>
         <Stat label='hack' value={`$${ns.formatNumber(farmIncome)} / sec`} style={MoneyStyle} />
         <Stat label='hacknet (estimate)' value={`$${ns.formatNumber(getHacknetProduction(ns))} / sec`} style={MoneyStyle} />
+        {ns.stock.hasTIXAPIAccess() ? <Stat label='stock' value={`$${ns.formatNumber(stockIncome)} / sec`} style={MoneyStyle} /> : null}
+        {ns.gang.inGang() ? <Stat label='gang' value={`$${ns.gang.inGang() ? ns.formatNumber(moneyGainRate(ns)) : 0} / sec`} style={MoneyStyle} /> : null}
       </>
     }} />
-
-    <Ticker
-      nextWait={() => ns.stock.hasTIXAPIAccess() ? ns.stock.nextUpdate() : ns.asleep(2000)}
-      render={() => {
-        if (!ns.stock.hasTIXAPIAccess()) return null
-
-        const stockIncome = ps(ns, 'stock.js').reduce((a, c) => a + ns.getScriptIncome(c.filename, c.host, ...c.args), 0)
-
-        return <>
-          <Stat label='stock' value={`$${ns.formatNumber(stockIncome)} / sec`} style={MoneyStyle} />
-          <Stat label='position' value={`$${ns.formatNumber(getTotalPosition(ns))}`} style={MoneyStyle} />
-        </>
-      }}
-    />
-
-    <TimeTicker interval={2000} render={() =>
-      ns.gang.inGang() ?
-        <Stat label='gang' value={`$${ns.gang.inGang() ? ns.formatNumber(moneyGainRate(ns)) : 0} / sec`} style={MoneyStyle} />
-        : null
-    } />
   </Section>
 }
 
@@ -141,15 +128,12 @@ export function Hack({ ns }: { ns: NS }) {
   </Section>
 }
 
-export function Hardware({ ns }: { ns: NS }) {
-  return <Section title='Hardware'>
+export function PurchasedServer({ ns }: { ns: NS }) {
+  return <Section title='Purchased server'>
     <TimeTicker interval={2000} render={() =>
       <>
-        <Stat label='home RAM' value={ns.formatRam(ns.getServerMaxRam('home'))} />
-        <Stat label='home cores' value={ns.getServer('home').cpuCores} />
-        <Stat label='purchased server' value={`${ns.getPurchasedServers().length} / ${ns.getPurchasedServerLimit()}`} />
-        <Stat label='purchased server RAM' value=
-          {ns.formatRam(ns.getPurchasedServers().map(ns.getServerMaxRam).reduce((a, c) => a + c, 0))} />
+        <Stat label='servers' value={`${ns.getPurchasedServers().length} / ${ns.getPurchasedServerLimit()}`} />
+        <Stat label='ram' value={ns.formatRam(ns.getPurchasedServers().map(ns.getServerMaxRam).reduce((a, c) => a + c, 0))} />
       </>
     } />
   </Section>
@@ -163,6 +147,22 @@ export function Hacknet({ ns }: { ns: NS }) {
       <Stat label='hash rate' value={`${ns.formatNumber(getHacknetHashRate(ns))} h / s`} />
     </Section>
   } />
+}
+
+export function Stock({ ns }: { ns: NS }) {
+  return <Ticker
+    nextWait={() => ns.stock.hasTIXAPIAccess() ? ns.stock.nextUpdate() : ns.asleep(2000)}
+    render={() => {
+      if (!ns.stock.hasTIXAPIAccess()) {
+        return null
+      }
+
+      return <Section title='Stock'>
+        <Stat label='holding symbol' value={`${getSymbols(ns, true).length} / ${ns.stock.getSymbols().length}`} />
+        <Stat label='total position' value={`$${ns.formatNumber(getTotalPosition(ns))}`} style={MoneyStyle} />
+      </Section>
+    }}
+  />
 }
 
 export function IPvGO({ ns }: { ns: NS }) {

@@ -57,6 +57,11 @@ export function sellAll(ns: NS, sym: string) {
     }
 }
 
+export function getSymbols(ns: NS, holdingOnly = false): string[] {
+    return ns.stock.getSymbols()
+        .filter(sym => !holdingOnly || ns.stock.getPosition(sym)[0] > 0)
+}
+
 export function buyMax(ns: NS, sym: string, preservedMoney = 0) {
     const budget = getBudget(ns, Infinity, preservedMoney)
 

@@ -5,7 +5,8 @@ export async function main(ns: NS): Promise<void> {
     const substring = (ns.args.filter(arg => arg !== '-f').at(0) ?? '') as string
     const force = ns.args.some(arg => arg === '-f')
 
-    const remoteFiles = ls(ns, substring).filter(rf => rf.name.endsWith('.js'))
+    const remoteFiles = ls(ns, substring).filter(rf =>
+        rf.name.endsWith('.js') || rf.name.endsWith('.cct'))
     if (remoteFiles.length == 0) {
         ns.tprintf('No files found')
         return

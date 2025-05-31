@@ -86,10 +86,12 @@ export function autoPurchaseEquipment(ns: NS, budgetLimit = 0, preservedMoney = 
 export function autoSetMemberTask(ns: NS) {
     const members = ns.gang.getMemberNames()
 
-    const [wantedLevelTeamSize, respectTeamSize, powerTeamSize, incomeTeamSize] =
-        isTerritoryWarfareNotCompleted(ns) ?
-            [1, 1, members.length - 2, 0] :
-            [1, 0, 0, members.length - 1];
+    const [wantedLevelTeamSize, respectTeamSize, incomeTeamSize, powerTeamSize] =
+        ns.gang.getMemberNames().length < maxGangMembers ?
+            [1, 1, 0, members.length - 2] :
+            isTerritoryWarfareNotCompleted(ns) ?
+                [1, 0, 1, members.length - 2] :
+                [1, 0, members.length - 1, 0];
 
     let index = 0;
 
@@ -114,13 +116,13 @@ export function autoSetMemberTask(ns: NS) {
         setMemberTask(ns, m, task ?? '')
     })
 
-    // power team
-    members.slice(index, index += powerTeamSize).forEach(m =>
-        setMemberTask(ns, m, 'Territory Warfare'))
-
     // income team
     members.slice(index, index += incomeTeamSize).forEach(m =>
         setMemberTask(ns, m, getSortedTasks(ns, m, GainType.Money).at(-1) ?? ''))
+
+    // power team
+    members.slice(index, index += powerTeamSize).forEach(m =>
+        setMemberTask(ns, m, 'Territory Warfare'))
 }
 
 export function setMemberTask(ns: NS, member: string, task: string) {
@@ -211,6 +213,8 @@ export function getGangs(ns: NS): string[] {
 export function isTerritoryWarfareNotCompleted(ns: NS): boolean {
     return !(ns.gang.inGang() && ns.gang.getGangInformation().territory == 1);
 }
+
+export const maxGangMembers = 12;
 
 const tickPerSecond = 5;
 

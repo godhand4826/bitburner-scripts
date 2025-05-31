@@ -3,7 +3,7 @@ import React from './lib/react'
 import { forever, formatTime, now, sleep } from './lib/time';
 import { getHacknetHashRate, getHacknetProduction } from './lib/hacknet';
 import { ps } from './lib/remote';
-import { getMinChanceToWinClash, getWantedPenalty, moneyGainRate, respectGainRate, wantedLevelGainRate } from './lib/gang';
+import { getMinChanceToWinClash, getWantedPenalty, maxGangMembers, moneyGainRate, respectGainRate, wantedLevelGainRate } from './lib/gang';
 import { list } from './lib/host';
 import { getBonusPercent, getSafeCheats } from './lib/go';
 import { getNextBlackOpRequiredRank, getOperationTimeReduction, getStaminaPercentage } from './lib/bladeburner';
@@ -185,7 +185,7 @@ export function Gang({ ns }: { ns: NS }) {
     nextWait={() => ns.gang.inGang() ? ns.gang.nextUpdate() : ns.asleep(2000)}
     render={() => !ns.gang.inGang() ? null :
       <Section title='Gang'>
-        <Stat label='member' value={`${ns.gang.getMemberNames().length} / ${12}`} />
+        <Stat label='member' value={`${ns.gang.getMemberNames().length} / ${maxGangMembers}`} />
         <Stat label='respect' value={`${ns.formatNumber(ns.gang.getGangInformation().respect)} / ${ns.formatNumber(ns.gang.respectForNextRecruit())}`} />
         <Stat label='respect gain rate' value={ns.formatNumber(respectGainRate(ns))} />
         <Stat label='wanted level' value={`${ns.formatNumber(ns.gang.getGangInformation().wantedLevel)}`} />

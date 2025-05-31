@@ -445,43 +445,35 @@ export function sanitizeParenthesesInExpression(s: string) {
 }
 
 export function findAllValidMathExpressions([s, n]: [string, number]) {
-  // TODO
-  const result: string[] = []
-  const stack: string[] = []
-  f(s.length)
+  const result: string[] = [];
+  dfs('', 0, 0, 0)
   return result
-  function f(j: number) {
-    if (j <= 0) {
-      try {
-        const expr = stack.join('');
-        if (!expr.startsWith('-') && eval(expr) == n) {
-          result.push(expr.slice(1));
-        }
-      } catch {
-        // 
+
+  function dfs(expr: string, i: number, value: number, lastOperand: number) {
+    if (i == s.length) {
+      if (value == n) {
+        result.push(expr);
       }
-      return;
+      return
     }
-    for (let i = 0; i < j; i++) {
-      // no leading zero
-      if (s[i] == '0' && j - i >= 2) continue;
 
-      const v = Number(s.slice(i, j));
-      stack.unshift(String(v));
-      {
-        stack.unshift('+');
-        f(i);
-        stack.shift();
-
-        stack.unshift('-');
-        f(i);
-        stack.shift();
-
-        stack.unshift('*');
-        f(i);
-        stack.shift();
+    // try all possible digits from s[i:i+1] to s[i:s.length]
+    for (let j = i; j < s.length; j++) {
+      if (s[i] == '0' && j != i) {
+        // skip leading zero
+        break;
       }
-      stack.shift();
+
+      const digits = s.substring(i, j + 1);
+      const v = parseInt(digits);
+      if (i == 0) {
+        // can't add any operator before the first digits of the whole expression
+        dfs(`${v}`, j + 1, v, v);
+      } else {
+        dfs(`${expr}+${digits}`, j + 1, value + v, v);
+        dfs(`${expr}-${digits}`, j + 1, value - v, -v);
+        dfs(`${expr}*${digits}`, j + 1, value - lastOperand + lastOperand * v, lastOperand * v);
+      }
     }
   }
 }

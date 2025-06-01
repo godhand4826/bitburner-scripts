@@ -21,9 +21,13 @@ export function getCityChaos(ns: NS): number {
 }
 
 export function upgradeSkills(ns: NS) {
-    ns.bladeburner.getSkillNames()
-        .sort((a, b) => ns.bladeburner.getSkillLevel(a) - ns.bladeburner.getSkillLevel(b))
-        .forEach(skill => upgradeSkill(ns, skill))
+    if (ns.bladeburner.getSkillLevel('Overclock') < 90) {
+        upgradeSkill(ns, 'Overclock')
+    } else {
+        ns.bladeburner.getSkillNames()
+            .sort((a, b) => ns.bladeburner.getSkillLevel(a) - ns.bladeburner.getSkillLevel(b))
+            .forEach(skill => upgradeSkill(ns, skill))
+    }
 }
 
 export function getOperationTimeReduction(ns: NS): number {

@@ -51,3 +51,8 @@
   - message broker that control topic capacity
 - stock
   - release time as argument
+- stock release
+  - calculate augment factor to control stock position release timing
+  - release can also to unlock faction
+- bladeburner
+  - dashboard show current action remaining time

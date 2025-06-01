@@ -1,9 +1,8 @@
 import { NS } from '@ns';
-import { purchaseStockAPIs, closeAllPosition, isFullyPurchasedStockAPIs, autoClosePositions, autoCreatePositions } from './lib/stock'
+import { purchaseStockAPIs, closeAllPosition, isFullyPurchasedStockAPIs, autoClosePositions, autoCreatePositions, getTotalPosition } from './lib/stock'
 import { disableLogs } from './lib/log';
 import { formatTime, now } from './lib/time';
-import { getBudget } from './lib/money';
-import { t } from './lib/const';
+import { b } from './lib/const';
 
 export function run(ns: NS, preservedMoney = 250_000_000) {
     ns.run('stock.js', 1, preservedMoney)
@@ -27,7 +26,7 @@ export async function main(ns: NS): Promise<void> {
     let nextReleaseAt = now();
     for (; ;) {
         // release money awhile for spend
-        if (now() >= nextReleaseAt && getBudget(ns) < 1 * t) {
+        if (now() >= nextReleaseAt && getTotalPosition(ns) > 100 * b) {
             ns.toast(`release all position for ${ns.tFormat(releaseTime)}`, 'info', releaseTime + 2000)
             closeAllPosition(ns)
             nextReleaseAt = now() + releaseInterval

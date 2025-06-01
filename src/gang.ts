@@ -13,9 +13,9 @@ export async function main(ns: NS): Promise<void> {
     disableLogs(ns, 'sleep', 'gang.createGang', 'getServerMoneyAvailable', 'gang.renameMember')
 
     while (!ns.gang.inGang()) {
-        if (ns.gang.createGang(ns.enums.FactionName.NiteSec)) {
-            ns.tprint(`Successfully create gang with ${ns.enums.FactionName.NiteSec}`)
-        }
+        // if (ns.gang.createGang(ns.enums.FactionName.NiteSec)) {
+        //     ns.tprint(`Successfully create gang with ${ns.gang.getGangInformation().faction}`)
+        // }
 
         await ns.sleep(2000)
     }

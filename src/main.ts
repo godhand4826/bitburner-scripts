@@ -16,8 +16,6 @@ export async function main(ns: NS): Promise<void> {
 
   ns.run('focus.js')
 
-  ns.run('overview.js')
-  ns.run('dashboard.js')
 
   ns.run('darkweb.js')
   ns.run('nuke.js')
@@ -32,5 +30,7 @@ export async function main(ns: NS): Promise<void> {
   ns.run('bladeburner.js')
   runGang(ns, 1 * t, 100 * b)
 
+  ns.run('overview.js')
+  ns.run('dashboard.js')
   // ns.run('reputation.js', 1, true, false, false)
 }

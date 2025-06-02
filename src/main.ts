@@ -26,7 +26,7 @@ export async function main(ns: NS): Promise<void> {
   runFaction(ns, 3)
   runStock(ns, 250 * m)
   ns.run('sleeve.js')
-  runServer(ns, 1 * t, 1 * t)
+  runServer(ns, 1 * t, 200 * b)
   ns.run('backdoor.js')
   ns.run('bladeburner.js')
   runGang(ns, 1 * t, 100 * b)

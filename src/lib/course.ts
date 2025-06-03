@@ -8,8 +8,8 @@ export function setCourse(ns: NS,
 ) {
     const course = getCurrentCourse(ns)
     if (
-        travelToCity(ns, getUniversityCity(ns, universityName)) &&
         (course?.universityName != universityName || course?.courseName != courseName) &&
+        travelToCity(ns, getUniversityCity(ns, universityName)) &&
         ns.singularity.universityCourse(universityName, courseName, focus)
     ) {
         ns.tprint(`Started ${courseName} at ${universityName}`)

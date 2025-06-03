@@ -6,14 +6,14 @@ import { hasSimulacrum } from './bladeburner';
 export async function autoSetAction(ns: NS) {
     if (ns.getPlayer().skills.hacking < 100) {
         setCourse(ns, 'Rothman University', 'Computer Science')
-    } else if (!ns.gang.inGang()) {
+    } else if (!ns.gang.inGang() && ns.getPlayer().karma > -54000) {
         crimeForKarmaAndKill(ns, true)
     } else if (!hasSimulacrum(ns)) {
         // Release focus to allow bladeburner.js to take over and
         // farm reputation for Simulacrum
         stopAction(ns)
     } else {
-        setCourse(ns, 'ZB Institute of Technology', 'Computer Science')
+        setCourse(ns, 'ZB Institute of Technology', 'Algorithms')
     }
 }
 

@@ -1,4 +1,4 @@
-import { NS } from "@ns";
+import { GymLocationName, GymType, NS } from "@ns";
 
 export function autoSetAction(ns: NS) {
     for (let i = 0; i < ns.sleeve.getNumSleeves(); i++) {
@@ -23,7 +23,25 @@ export function autoSetAction(ns: NS) {
                 min = skills.agility
                 gymType = ns.enums.GymType.agility
             }
-            ns.sleeve.setToGymWorkout(i, 'Powerhouse Gym', gymType)
+            setToGymWorkout(ns, i, 'Powerhouse Gym', gymType)
+        }
+    }
+}
+
+export function setToGymWorkout(
+    ns: NS,
+    sleeve: number,
+    gymName: GymLocationName | `${GymLocationName}`,
+    gymType: GymType | `${GymType}`,
+) {
+    const task = ns.sleeve.getTask(sleeve)
+    if (task?.type != 'CLASS' ||
+        (task.location != gymName || task.classType != gymType)
+    ) {
+        if (ns.sleeve.setToGymWorkout(sleeve, gymName, gymType)) {
+            ns.tprint(`Set task train ${gymType} at ${gymName} for sleeve ${sleeve}`)
+        } else {
+            ns.tprint(`Failed to set task train ${gymType} at ${gymName} for sleeve ${sleeve}`)
         }
     }
 }

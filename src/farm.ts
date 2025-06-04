@@ -3,6 +3,7 @@ import { computeEarningsVelocity, execHWGW, getHWGWTime, paddingTime } from './l
 import { list } from './lib/host.js';
 import { disableLogs } from './lib/log.js';
 import { formatTime, now } from './lib/time.js';
+import { syncScripts } from './lib/remote.js';
 
 export async function main(ns: NS): Promise<void> {
   disableLogs(ns, 'exec', 'sleep', 'getServerMaxRam', 'getServerUsedRam', 'getHackingLevel', 'getServerMoneyAvailable', 'scan')
@@ -27,6 +28,8 @@ export async function HWGW(ns: NS): Promise<void> {
 
     ns.print(`Batch hacking ${target} will complete in ${ns.tFormat(batchTime)} at ${formatTime(completeAt)}`)
     ns.toast(`Batch hacking ${target} will complete in ${ns.tFormat(batchTime)} at ${formatTime(completeAt)}`, 'info', batchTime + 2000)
+
+    syncScripts(ns)
 
     let batches = 0
     for (const host of list(ns, { onlyNuked: true, includePurchased: true, includeHome: true })) {

@@ -57,5 +57,3 @@
 - bladeburner
   - dashboard show current action remaining time
   - Datamancer, Cyber's Edge, Hands of Midas might be exclude
-- focus
-  - grafting

@@ -1,6 +1,6 @@
 import { NS } from '@ns'
 import { b, m, t } from './lib/const'
-import { pkill, syncScripts } from './lib/remote'
+import { pkill } from './lib/remote'
 import { run as runStock } from './stock'
 import { run as runHacknet } from './hacknet'
 import { run as runServer } from './server'
@@ -12,16 +12,13 @@ export async function main(ns: NS): Promise<void> {
   await ready()
 
   pkill(ns)
-  syncScripts(ns)
 
   ns.run('focus.js')
-
-
   ns.run('darkweb.js')
   ns.run('nuke.js')
   ns.run('farm.js')
   ns.run('cct.js')
-  runHacknet(ns, 30 * m, 0 * 500 * m, 0)
+  runHacknet(ns, 30 * m, 0, 0)
   ns.run('go.js')
   runFaction(ns, 3)
   runStock(ns, 250 * m)

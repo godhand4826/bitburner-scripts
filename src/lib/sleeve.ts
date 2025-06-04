@@ -1,4 +1,5 @@
 import { GymLocationName, GymType, NS } from "@ns";
+import { getBudget } from "./money";
 
 export function autoSetAction(ns: NS) {
     for (let i = 0; i < ns.sleeve.getNumSleeves(); i++) {
@@ -63,5 +64,25 @@ export function setToSynchronize(ns: NS, sleeve: number) {
         } else {
             ns.tprint(`Failed to set task synchronize for sleeve ${sleeve}`)
         }
+    }
+}
+
+export function autoPurchaseAugs(ns: NS) {
+    for (let i = 0; i < ns.sleeve.getNumSleeves(); i++) {
+        for (const augName of getPurchasableAugs(ns, i)) {
+            purchaseAug(ns, i, augName)
+        }
+    }
+}
+
+export function getPurchasableAugs(ns: NS, sleeve: number): string[] {
+    return ns.sleeve.getSleevePurchasableAugs(sleeve)
+        .sort((a, b) => a.cost - b.cost)
+        .map(aug => aug.name)
+}
+
+export function purchaseAug(ns: NS, sleeve: number, augName: string) {
+    if (ns.sleeve.getSleeveAugmentationPrice(augName) <= getBudget(ns)) {
+        ns.sleeve.purchaseSleeveAug(sleeve, augName)
     }
 }

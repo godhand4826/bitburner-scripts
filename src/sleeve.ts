@@ -1,5 +1,5 @@
 import { NS } from '@ns'
-import { autoSetAction } from './lib/sleeve'
+import { autoPurchaseAugs, autoSetAction } from './lib/sleeve'
 import { disableLogs } from './lib/log'
 
 export async function main(ns: NS): Promise<void> {
@@ -7,6 +7,7 @@ export async function main(ns: NS): Promise<void> {
 
     for (; ;) {
         autoSetAction(ns)
+        autoPurchaseAugs(ns)
 
         await ns.sleep(2000)
     }

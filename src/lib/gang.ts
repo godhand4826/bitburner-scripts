@@ -58,7 +58,7 @@ export function autoPurchaseEquipment(ns: NS, budgetLimit = 0, preservedMoney = 
                 ns.gang.getEquipmentCost(equipment) <= getBudget(ns, budgetLimit, preservedMoney) &&
                 ns.gang.purchaseEquipment(member, equipment)
             ) {
-                ns.tprint(`Purchased ${equipment} for ${member}`)
+                ns.toast(`Purchased ${equipment} for ${member}`)
             }
         }
     }

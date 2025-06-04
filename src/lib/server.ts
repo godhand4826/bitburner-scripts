@@ -10,7 +10,7 @@ export function purchaseServer(ns: NS, ram = 2): string {
 
     const hostname = ns.purchaseServer(host, ram)
     if (hostname != '') {
-        ns.tprint(`You have purchase ${hostname}`)
+        ns.toast(`You have purchase ${hostname}`)
     }
     return hostname
 }
@@ -25,7 +25,7 @@ export function autoPurchasedServer(ns: NS, budgetLimit = Infinity, preservedMon
         getPurchasedServerCost(ns) <= getBudget(ns, budgetLimit, preservedMoney) &&
         (host = purchaseServer(ns)) != ''
     ) {
-        ns.tprint(`You have purchased ${host} with RAM ${ns.formatRam(ns.getServerMaxRam(host))}`)
+        ns.toast(`You have purchased ${host} with RAM ${ns.formatRam(ns.getServerMaxRam(host))}`)
     }
 }
 
@@ -42,7 +42,7 @@ export function autoUpgradePurchasedServer(ns: NS, budgetLimit = Infinity, prese
             ns.getServerMaxRam(host) << 1 <= ramLimit &&
             upgradePurchasedServer(ns, host)
         ) {
-            ns.tprint(`${host} RAM upgraded to ${ns.formatRam(ns.getServerMaxRam(host))}`)
+            ns.toast(`${host} RAM upgraded to ${ns.formatRam(ns.getServerMaxRam(host))}`)
         }
     }
 }

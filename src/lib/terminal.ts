@@ -11,11 +11,14 @@ export function run(cmd: string) {
     // Get a reference to the React event handler.
     const handler = Object.keys(terminalInput)[1];
 
-    // Perform an onChange event to set some internal values.
-    terminalInput[handler].onChange({ target: terminalInput });
+    // If triggered by another UI event, executing immediately might not work properly
+    setTimeout(() => {
+        // Perform an onChange event to set some internal values.
+        terminalInput[handler].onChange({ target: terminalInput });
 
-    // Simulate an enter press
-    terminalInput[handler].onKeyDown({ key: 'Enter', preventDefault: () => null });
+        // Simulate an enter press
+        terminalInput[handler].onKeyDown({ key: 'Enter', preventDefault: () => null });
+    }, 0);
 }
 
 export function isDisabled(): boolean {

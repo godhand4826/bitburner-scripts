@@ -2,6 +2,7 @@ import { NS } from '@ns';
 import { setCourse } from './course';
 import { crimeForKarmaAndKill } from './crime';
 import { hasSimulacrum } from './bladeburner';
+import { autoGrafting, list } from './grafting';
 
 export async function autoSetAction(ns: NS) {
     if (ns.getPlayer().skills.hacking < 100) {
@@ -12,6 +13,8 @@ export async function autoSetAction(ns: NS) {
         // Release focus to allow bladeburner.js to take over and
         // farm reputation for Simulacrum
         stopAction(ns)
+    } else if(list(ns, true).length > 0) {
+        await autoGrafting(ns)
     } else {
         setCourse(ns, 'ZB Institute of Technology', 'Algorithms')
     }

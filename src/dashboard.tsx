@@ -57,6 +57,7 @@ export function Dashboard({ ns }: { ns: NS }) {
     <Production ns={ns} />
     <Hack ns={ns} />
     <Hacknet ns={ns} />
+    <Sleeves ns={ns} />
     <Stock ns={ns} />
     <Bladeburner ns={ns} />
     <Gang ns={ns} />
@@ -145,6 +146,14 @@ export function Hacknet({ ns }: { ns: NS }) {
       <Stat label='nodes' value={`${ns.hacknet.numNodes()} / ${ns.hacknet.maxNumNodes()}`} />
       <Stat label='hash' value={`${ns.formatNumber(ns.hacknet.numHashes())} / ${ns.formatNumber(ns.hacknet.hashCapacity())}`} />
       <Stat label='hash rate' value={`${ns.formatNumber(getHacknetHashRate(ns))} h / s`} />
+    </Section>
+  } />
+}
+
+export function Sleeves({ ns }: { ns: NS }) {
+  return <TimeTicker interval={2000} render={() =>
+    <Section title='Sleeves'>
+      <Stat label='sleeve' value={`${ns.sleeve.getNumSleeves()}`} />
     </Section>
   } />
 }

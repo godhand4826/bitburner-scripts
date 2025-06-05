@@ -82,7 +82,11 @@ export function getPurchasableAugs(ns: NS, sleeve: number): string[] {
 }
 
 export function purchaseAug(ns: NS, sleeve: number, augName: string) {
-    if (ns.sleeve.getSleeveAugmentationPrice(augName) <= getBudget(ns)) {
+    if (
+        ns.sleeve.getSleeve(sleeve).shock == 0 &&
+        ns.sleeve.getSleeveAugmentationPrice(augName) <= getBudget(ns) &&
         ns.sleeve.purchaseSleeveAug(sleeve, augName)
+    ) {
+        ns.toast(`You have purchased ${augName} for sleeve ${sleeve}`)
     }
 }

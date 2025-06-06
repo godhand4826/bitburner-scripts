@@ -1,5 +1,7 @@
-import { GymLocationName, GymType, NS } from "@ns";
+import { CityName, GymLocationName, GymType, NS, UniversityClassType, UniversityLocationName } from "@ns";
 import { getBudget } from "./money";
+import { airlineTicketPrice } from "./travel";
+import { Course, getUniversityCity } from "./course";
 
 export function autoSetAction(ns: NS) {
     for (let i = 0; i < ns.sleeve.getNumSleeves(); i++) {
@@ -8,6 +10,8 @@ export function autoSetAction(ns: NS) {
             setToShockRecovery(ns, i)
         } else if (sleeve.sync < 100) {
             setToSynchronize(ns, i)
+        } else if (ns.getPlayer().skills.hacking < 500) {
+            setCourse(ns, i, 'ZB Institute of Technology', 'Computer Science')
         } else {
             const skills = ns.getPlayer().skills
             let min = skills.strength
@@ -27,6 +31,39 @@ export function autoSetAction(ns: NS) {
             setToGymWorkout(ns, i, 'Powerhouse Gym', gymType)
         }
     }
+}
+
+export function setCourse(ns: NS, sleeve: number,
+    universityName: UniversityLocationName | `${UniversityLocationName}`,
+    courseName: UniversityClassType | `${UniversityClassType}`,
+) {
+    const course = getCurrentCourse(ns, sleeve)
+    if (
+        (course?.universityName != universityName || course?.courseName != courseName) &&
+        travelToCity(ns, sleeve, getUniversityCity(ns, universityName)) &&
+        ns.sleeve.setToUniversityCourse(sleeve, universityName, courseName)
+    ) {
+        ns.tprint(`Sleeve ${sleeve} started ${courseName} at ${universityName}`)
+    }
+}
+
+export function travelToCity(ns: NS, sleeve: number, city: CityName | `${CityName}`): boolean {
+    if (
+        ns.sleeve.getSleeve(sleeve).city != city &&
+        getBudget(ns) >= airlineTicketPrice &&
+        ns.sleeve.travel(sleeve, city)
+    ) {
+        ns.tprint(`Sleeve ${sleeve} traveled to ${city}`)
+    }
+    return ns.sleeve.getSleeve(sleeve).city == city
+}
+
+export function getCurrentCourse(ns: NS, sleeve: number): Course | undefined {
+    const task = ns.sleeve.getTask(sleeve)
+    return task?.type == 'CLASS' ? {
+        universityName: task.location as UniversityLocationName,
+        courseName: task.classType as UniversityClassType
+    } : undefined
 }
 
 export function setToGymWorkout(

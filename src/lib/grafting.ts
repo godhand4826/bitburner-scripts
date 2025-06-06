@@ -25,11 +25,10 @@ export async function grafting(
     ns: NS,
     augName: string,
     focus = ns.singularity.isFocused(),
-): Promise<void> {
+) {
     if (graft(ns, augName, focus)) {
         await ns.grafting.waitForOngoingGrafting()
     }
-    return
 }
 
 export function graft(

@@ -11,7 +11,7 @@ export function autoSetAction(ns: NS) {
         } else if (sleeve.sync < 100) {
             setToSynchronize(ns, i)
         } else if (ns.getPlayer().skills.hacking < 500) {
-            setCourse(ns, i, 'ZB Institute of Technology', 'Computer Science')
+            setSleeveCourse(ns, i, 'ZB Institute of Technology', 'Computer Science')
         } else {
             const skills = ns.getPlayer().skills
             let min = skills.strength
@@ -33,21 +33,21 @@ export function autoSetAction(ns: NS) {
     }
 }
 
-export function setCourse(ns: NS, sleeve: number,
+export function setSleeveCourse(ns: NS, sleeve: number,
     universityName: UniversityLocationName | `${UniversityLocationName}`,
     courseName: UniversityClassType | `${UniversityClassType}`,
 ) {
-    const course = getCurrentCourse(ns, sleeve)
+    const course = getSleeveCurrentCourse(ns, sleeve)
     if (
         (course?.universityName != universityName || course?.courseName != courseName) &&
-        travelToCity(ns, sleeve, getUniversityCity(ns, universityName)) &&
+        travelSleeveToCity(ns, sleeve, getUniversityCity(ns, universityName)) &&
         ns.sleeve.setToUniversityCourse(sleeve, universityName, courseName)
     ) {
         ns.tprint(`Sleeve ${sleeve} started ${courseName} at ${universityName}`)
     }
 }
 
-export function travelToCity(ns: NS, sleeve: number, city: CityName | `${CityName}`): boolean {
+export function travelSleeveToCity(ns: NS, sleeve: number, city: CityName | `${CityName}`): boolean {
     if (
         ns.sleeve.getSleeve(sleeve).city != city &&
         getBudget(ns) >= airlineTicketPrice &&
@@ -58,7 +58,7 @@ export function travelToCity(ns: NS, sleeve: number, city: CityName | `${CityNam
     return ns.sleeve.getSleeve(sleeve).city == city
 }
 
-export function getCurrentCourse(ns: NS, sleeve: number): Course | undefined {
+export function getSleeveCurrentCourse(ns: NS, sleeve: number): Course | undefined {
     const task = ns.sleeve.getTask(sleeve)
     return task?.type == 'CLASS' ? {
         universityName: task.location as UniversityLocationName,

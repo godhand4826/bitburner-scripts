@@ -6,7 +6,7 @@ export async function main(ns: NS): Promise<void> {
     disableLogs(ns, 'sleep')
 
     for (; ;) {
-        autoSetAction(ns)
+        await autoSetAction(ns)
 
         await ns.sleep(2000)
     }

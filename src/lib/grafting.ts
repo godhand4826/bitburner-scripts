@@ -8,16 +8,18 @@ export function list(ns: NS, onlyPurchasable = false): string[] {
 
     return ns.grafting.getGraftableAugmentations()
         .filter(augName => !onlyPurchasable || ns.grafting.getAugmentationGraftPrice(augName) <= budget)
+        .sort((a, b) => ns.grafting.getAugmentationGraftPrice(a) - ns.grafting.getAugmentationGraftPrice(b))
 }
 
 export async function autoGrafting(ns: NS) {
     if (getCurrentGraft(ns)) {
         await ns.grafting.waitForOngoingGrafting()
     } else {
-        const augs = list(ns, true)
-        if (augs.length > 0) {
-            await grafting(ns, augs[0])
+        const aug = list(ns, true).at(-1)
+        if (!aug) {
+            return
         }
+        await grafting(ns, aug)
     }
 }
 
@@ -41,7 +43,8 @@ export function graft(
     if (
         getCurrentGraft(ns) != augName &&
         travelToCity(ns, 'New Tokyo') &&
-        ns.grafting.graftAugmentation(augName, focus)) {
+        ns.grafting.graftAugmentation(augName, focus)
+    ) {
         ns.toast(`Grafting ${augName} will complete ` +
             `in ${ns.tFormat(graftTime)} at ${formatTime(now() + graftTime)}`, 'info', graftTime + 2000)
 

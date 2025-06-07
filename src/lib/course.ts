@@ -41,6 +41,6 @@ export function getUniversityCity(
         case ns.enums.LocationName.VolhavenZBInstituteOfTechnology:
             return ns.enums.CityName.Volhaven
         default:
-            throw new Error('unexpected UniversityLocationName')
+            throw new Error(`unexpected UniversityLocationName: ${university}`)
     }
 }

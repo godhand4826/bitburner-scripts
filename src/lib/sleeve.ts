@@ -2,6 +2,7 @@ import { CityName, GymLocationName, GymType, NS, UniversityClassType, University
 import { getBudget } from "./money";
 import { airlineTicketPrice } from "./travel";
 import { Course, getUniversityCity } from "./course";
+import { getGymCity, Workout } from "./gym";
 
 export function autoSetAction(ns: NS) {
     for (let i = 0; i < ns.sleeve.getNumSleeves(); i++) {
@@ -30,6 +31,7 @@ export function autoSetAction(ns: NS) {
                 min = skills.agility
                 gymType = ns.enums.GymType.agility
             }
+            travelSleeveToCity(ns, i, 'Sector-12')
             setToGymWorkout(ns, i, 'Powerhouse Gym', gymType)
         }
     }
@@ -74,16 +76,26 @@ export function setToGymWorkout(
     gymName: GymLocationName | `${GymLocationName}`,
     gymType: GymType | `${GymType}`,
 ) {
-    const task = ns.sleeve.getTask(sleeve)
-    if (task?.type != 'CLASS' ||
-        (task.location != gymName || task.classType != gymType)
+    const task = getSleeveCurrentWorkout(ns, sleeve)
+    if (
+        (task?.gymName != gymName || task.gymType != gymType) &&
+        travelSleeveToCity(ns, sleeve, getGymCity(ns, gymName)) &&
+        ns.sleeve.setToGymWorkout(sleeve, gymName, gymType)
     ) {
-        if (ns.sleeve.setToGymWorkout(sleeve, gymName, gymType)) {
-            ns.tprint(`Set task train ${gymType} at ${gymName} for sleeve ${sleeve}`)
-        } else {
-            ns.tprint(`Failed to set task train ${gymType} at ${gymName} for sleeve ${sleeve}`)
-        }
+        ns.tprint(`Set task train ${gymType} at ${gymName} for sleeve ${sleeve}`)
     }
+}
+export function getSleeveCurrentWorkout(ns: NS, sleeve: number): Workout | undefined {
+    const task = ns.sleeve.getTask(sleeve)
+    return task?.type == 'CLASS' && (
+        task.classType == ns.enums.GymType.agility ||
+        task.classType == ns.enums.GymType.defense ||
+        task.classType == ns.enums.GymType.dexterity ||
+        task.classType == ns.enums.GymType.strength
+    ) ? {
+        gymName: task.location as GymLocationName,
+        gymType: task.classType as GymType
+    } : undefined
 }
 
 export function setToShockRecovery(ns: NS, sleeve: number) {

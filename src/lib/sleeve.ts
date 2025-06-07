@@ -10,8 +10,10 @@ export function autoSetAction(ns: NS) {
             setToShockRecovery(ns, i)
         } else if (sleeve.sync < 100) {
             setToSynchronize(ns, i)
-        } else if (ns.getPlayer().skills.hacking < 500) {
+        } else if (ns.getPlayer().skills.hacking < 150) {
             setSleeveCourse(ns, i, 'ZB Institute of Technology', 'Computer Science')
+        } else if (ns.getPlayer().skills.hacking < 340) {
+            setSleeveCourse(ns, i, 'ZB Institute of Technology', 'Algorithms')
         } else {
             const skills = ns.getPlayer().skills
             let min = skills.strength

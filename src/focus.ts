@@ -3,7 +3,7 @@ import { disableLogs } from './lib/log';
 import { autoSetAction } from './lib/focus';
 
 export async function main(ns: NS): Promise<void> {
-    disableLogs(ns, 'sleep')
+    disableLogs(ns, 'sleep', 'getServerMoneyAvailable')
 
     for (; ;) {
         await autoSetAction(ns)

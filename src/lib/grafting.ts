@@ -15,7 +15,7 @@ export async function autoGrafting(ns: NS) {
     if (getCurrentGraft(ns)) {
         await ns.grafting.waitForOngoingGrafting()
     } else {
-        const aug = list(ns, true).at(-1)
+        const aug = list(ns, true).at(0)
         if (!aug) {
             return
         }

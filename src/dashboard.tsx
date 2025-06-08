@@ -52,8 +52,8 @@ export function Dashboard({ ns }: { ns: NS }) {
   }, []);
 
   return <div ref={divRef}>
-    <Assets ns={ns} />
     <Time />
+    <Assets ns={ns} />
     <Production ns={ns} />
     <Hack ns={ns} />
     <Hacknet ns={ns} />

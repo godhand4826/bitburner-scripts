@@ -6,9 +6,9 @@ import { travelToCity } from "./travel";
 export function list(ns: NS, onlyPurchasable = false): string[] {
     const budget = getBudget(ns)
 
+    // grafting augmentation by default order to avoid resolve prerequisites problem
     return ns.grafting.getGraftableAugmentations()
         .filter(augName => !onlyPurchasable || ns.grafting.getAugmentationGraftPrice(augName) <= budget)
-        .sort((a, b) => ns.grafting.getAugmentationGraftPrice(a) - ns.grafting.getAugmentationGraftPrice(b))
 }
 
 export async function autoGrafting(ns: NS) {

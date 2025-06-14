@@ -2,7 +2,7 @@ import { AutocompleteData, BasicHGWOptions, NS, ScriptArg } from '@ns';
 import { Flags } from './flag';
 import { maxThreads } from './ram';
 import { isMyMachine } from './server';
-import { formatTime, now } from './time';
+import { formatTime, milliFormat, now } from './time';
 
 export const hackScript = 'hack.js'
 export const growScript = 'grow.js'
@@ -27,6 +27,10 @@ export function getHWGWTime(ns: NS, host: string) {
     return ns.getWeakenTime(host) + 2 * paddingTime
 }
 
+export function getGWTime(ns: NS, host: string) {
+    return ns.getWeakenTime(host)
+}
+
 // exec a batch of weaken, hack, weaken, grow
 export async function execHWGW(ns: NS, host: string, target: string, limitRam = Infinity, preservedRam = 0): Promise<boolean> {
     const threads = maxThreads(ns, host, batchHackRam, limitRam, preservedRam)
@@ -49,21 +53,48 @@ export async function execHWGW(ns: NS, host: string, target: string, limitRam = 
     //             |== weaken ==========================|
     const execAt = now()
     ns.exec(hackScript, host, { threads },
-        formatTime(execAt + weakenTime - 1 * paddingTime),
-        ...toFlags({ host: target, additionalMsec: (weakenTime - 1 * paddingTime) - hackTime }))
+        formatTime(execAt + weakenTime - 1 * paddingTime, milliFormat),
+        ...toFlags({ host: target, additionalMsec: Math.max(0, (weakenTime - 1 * paddingTime) - hackTime) }))
     ns.exec(weakenScript, host, { threads },
-        formatTime(execAt + weakenTime + 0 * paddingTime),
-        ...toFlags({ host: target, additionalMsec: (weakenTime + 0 * paddingTime) - weakenTime }))
+        formatTime(execAt + weakenTime + 0 * paddingTime, milliFormat),
+        ...toFlags({ host: target, additionalMsec: Math.max(0, (weakenTime + 0 * paddingTime) - weakenTime) }))
     ns.exec(growScript, host, { threads },
-        formatTime(execAt + weakenTime + 1 * paddingTime),
-        ...toFlags({ host: target, additionalMsec: (weakenTime + 1 * paddingTime) - growTime }))
+        formatTime(execAt + weakenTime + 1 * paddingTime, milliFormat),
+        ...toFlags({ host: target, additionalMsec: Math.max(0, (weakenTime + 1 * paddingTime) - growTime) }))
     ns.exec(weakenScript, host, { threads },
-        formatTime(execAt + weakenTime + 2 * paddingTime),
-        ...toFlags({ host: target, additionalMsec: (weakenTime + 2 * paddingTime) - weakenTime }))
+        formatTime(execAt + weakenTime + 2 * paddingTime, milliFormat),
+        ...toFlags({ host: target, additionalMsec: Math.max(0, (weakenTime + 2 * paddingTime) - weakenTime) }))
     await ns.sleep(4 * paddingTime)
 
     return true
 }
+
+export async function execGW(ns: NS, host: string, target: string, limitRam = Infinity, preservedRam = 0): Promise<boolean> {
+    const threads = maxThreads(ns, host, batchGrowRam, limitRam, preservedRam)
+
+    if (!ns.hasRootAccess(host) || threads == 0) {
+        return false
+    }
+
+    const growTime = ns.getGrowTime(target)
+    const weakenTime = ns.getWeakenTime(target)
+
+    //                 |== grow ==============|-|
+    //     |== weaken  =========================|
+    //                   |== grow ================|
+    // |-|-|-|-|== weaken ==========================|
+    const execAt = now()
+    ns.exec(growScript, host, { threads },
+        formatTime(execAt + weakenTime - 1 * paddingTime, milliFormat),
+        ...toFlags({ host: target, additionalMsec: Math.max(0, (weakenTime - 1 * paddingTime) - growTime) }))
+    ns.exec(weakenScript, host, { threads },
+        formatTime(execAt + weakenTime + 0 * paddingTime, milliFormat),
+        ...toFlags({ host: target, additionalMsec: Math.max(0, (weakenTime + 0 * paddingTime) - weakenTime) }))
+    await ns.sleep(2 * paddingTime)
+
+    return true
+}
+
 
 export function isHackable(ns: NS, host: string) {
     return requiredHackingSkill(ns, host) <= ns.getHackingLevel()

@@ -19,19 +19,23 @@ export function autoSetAction(ns: NS) {
             const skills = ns.getPlayer().skills
             let min = skills.strength
             let gymType = ns.enums.GymType.strength
-            if (skills.defense < min) {
-                min = skills.defense
+            const workout = getSleeveCurrentWorkout(ns, i)?.gymType
+            if (skills.strength - (workout == ns.enums.GymType.strength ? 100 : 0) < min) {
+                min = skills.strength - (workout == ns.enums.GymType.strength ? 100 : 0)
+                gymType = ns.enums.GymType.strength
+            }
+            if (skills.defense - (workout == ns.enums.GymType.defense ? 100 : 0) < min) {
+                min = skills.defense - (workout == ns.enums.GymType.defense ? 100 : 0)
                 gymType = ns.enums.GymType.defense
             }
-            if (skills.dexterity < min) {
-                min = skills.dexterity
+            if (skills.dexterity - (workout == ns.enums.GymType.dexterity ? 100 : 0) < min) {
+                min = skills.dexterity - (workout == ns.enums.GymType.dexterity ? 100 : 0)
                 gymType = ns.enums.GymType.dexterity
             }
-            if (skills.agility < min) {
-                min = skills.agility
+            if (skills.agility - (workout == ns.enums.GymType.agility ? 100 : 0) < min) {
+                min = skills.agility - (workout == ns.enums.GymType.agility ? 100 : 0)
                 gymType = ns.enums.GymType.agility
             }
-            travelSleeveToCity(ns, i, 'Sector-12')
             setToGymWorkout(ns, i, 'Powerhouse Gym', gymType)
         }
     }

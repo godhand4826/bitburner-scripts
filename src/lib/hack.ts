@@ -13,7 +13,7 @@ export const growRam = 1.6 + 0.15
 export const weakenRam = 1.6 + 0.15
 export const batchHackRam = hackRam + weakenRam + growRam + weakenRam
 export const batchGrowRam = growRam + weakenRam
-export const paddingTime = 40
+export const paddingTime = 20
 
 export function computeEarningsVelocity(ns: NS, host: string) {
     const money = ns.getServerMoneyAvailable(host) * ns.hackAnalyze(host)

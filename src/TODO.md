@@ -65,3 +65,4 @@
   - by port
   - collapse same category notifications
   - toggle on/off
+- use JSON.parse to handle arg flags

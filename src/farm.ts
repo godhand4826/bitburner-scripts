@@ -6,18 +6,18 @@ import { formatTime, now } from './lib/time.js';
 import { syncScripts } from './lib/remote.js';
 
 export async function main(ns: NS): Promise<void> {
-  disableLogs(ns, 'scp', 'exec', 'sleep', 'getServerMaxRam', 'getServerUsedRam', 'getHackingLevel', 'getServerMoneyAvailable', 'scan')
+  disableLogs(ns, 'scp', 'exec', 'sleep', 'getServerMaxMoney', 'getServerMaxRam', 'getServerUsedRam', 'getHackingLevel', 'getServerMoneyAvailable', 'scan')
 
   for (; ;) {
     syncScripts(ns)
 
     await HWGW(ns)
-    await GW(ns)
+    await fill(ns)
   }
 }
 
 export async function HWGW(ns: NS): Promise<void> {
-  const batchPaddingTime = 1200 // should be grate or equal than 1120 in practice experience
+  const batchPaddingTime = 20 // should be grate or equal than 1120 in practice experience
 
   const targets = list(ns, { onlyNuked: true })
     .map(host => [host, computeEarningsVelocity(ns, host)] as [string, number])
@@ -47,16 +47,22 @@ export async function HWGW(ns: NS): Promise<void> {
   await ns.sleep(batchPaddingTime)
 }
 
-export async function GW(ns: NS): Promise<void> {
-  const batchPaddingTime = 1200 // should be grate or equal than 1120 in practice experience
+export async function fill(ns: NS) {
+  while (await GW(ns)) {
+    //
+  }
+}
+
+export async function GW(ns: NS): Promise<boolean> {
+  const batchPaddingTime = 20 // should be grate or equal than 1120 in practice experience
 
   const targets = list(ns, { onlyNuked: true })
     .map(host => [host, computeEarningsVelocity(ns, host)] as [string, number])
-    .filter(([, v]) => v > 0)
+    .filter(([host]) => (ns.getServer(host).moneyAvailable ?? 0) < ns.getServerMaxMoney(host))
     .sort((a, b) => a[1] - b[1])
     .map(([host]) => host)
 
-  console.assert(targets.length > 0)
+  if (targets.length == 0) return false
 
   const target = targets[0]
   const batchTime = getGWTime(ns, target)
@@ -77,4 +83,5 @@ export async function GW(ns: NS): Promise<void> {
   ns.toast(`Batch growing ${target} completed!`)
 
   await ns.sleep(batchPaddingTime)
+  return true
 }

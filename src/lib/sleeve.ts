@@ -82,7 +82,7 @@ export function setToGymWorkout(
         travelSleeveToCity(ns, sleeve, getGymCity(ns, gymName)) &&
         ns.sleeve.setToGymWorkout(sleeve, gymName, gymType)
     ) {
-        ns.tprint(`Set task train ${gymType} at ${gymName} for sleeve ${sleeve}`)
+        ns.toast(`Set task train ${gymType} at ${gymName} for sleeve ${sleeve}`, 'info')
     }
 }
 export function getSleeveCurrentWorkout(ns: NS, sleeve: number): Workout | undefined {
@@ -101,7 +101,7 @@ export function getSleeveCurrentWorkout(ns: NS, sleeve: number): Workout | undef
 export function setToShockRecovery(ns: NS, sleeve: number) {
     if (ns.sleeve.getTask(sleeve)?.type != 'RECOVERY') {
         if (ns.sleeve.setToShockRecovery(sleeve)) {
-            ns.tprint(`Set task shock recovery for sleeve ${sleeve}`)
+            ns.toast(`Set task shock recovery for sleeve ${sleeve}`, 'info')
         } else {
             ns.tprint(`Failed to set task shock recovery for sleeve ${sleeve}`)
         }
@@ -111,7 +111,7 @@ export function setToShockRecovery(ns: NS, sleeve: number) {
 export function setToSynchronize(ns: NS, sleeve: number) {
     if (ns.sleeve.getTask(sleeve)?.type != 'SYNCHRO') {
         if (ns.sleeve.setToSynchronize(sleeve)) {
-            ns.tprint(`Set task synchronize for sleeve ${sleeve}`)
+            ns.toast(`Set task synchronize for sleeve ${sleeve}`, 'info')
         } else {
             ns.tprint(`Failed to set task synchronize for sleeve ${sleeve}`)
         }

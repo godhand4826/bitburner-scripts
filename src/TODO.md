@@ -61,3 +61,7 @@
   - factions
   - augment
   - grafting
+- notification center
+  - by port
+  - collapse same category notifications
+  - toggle on/off

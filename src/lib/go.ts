@@ -188,7 +188,7 @@ export function autoResetBoard(ns: NS) {
         resetBoard(ns, 'Netburners', 5)
     } else if (getSafeCheats(ns) < 4) {
         resetBoard(ns, 'Slum Snakes', 5)
-    } else if (getBonusPercent(ns, 'Daedalus') < 3.00) {
+    } else if (getBonusPercent(ns, 'Daedalus') < 1.00) {
         resetBoard(ns, 'Daedalus', 5)
     } else if (getBonusPercent(ns, 'Tetrads') < 1.00) {
         resetBoard(ns, 'Tetrads', 5)

@@ -17,7 +17,7 @@ export async function main(ns: NS): Promise<void> {
 }
 
 export async function HWGW(ns: NS): Promise<void> {
-  const batchPaddingTime = 20 // should be grate or equal than 1120 in practice experience
+  const batchPaddingTime = 200
 
   const targets = list(ns, { onlyNuked: true })
     .map(host => [host, computeEarningsVelocity(ns, host)] as [string, number])
@@ -54,7 +54,7 @@ export async function fill(ns: NS) {
 }
 
 export async function GW(ns: NS): Promise<boolean> {
-  const batchPaddingTime = 20 // should be grate or equal than 1120 in practice experience
+  const batchPaddingTime = 200
 
   const targets = list(ns, { onlyNuked: true })
     .map(host => [host, computeEarningsVelocity(ns, host)] as [string, number])

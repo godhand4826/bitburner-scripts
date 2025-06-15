@@ -153,7 +153,7 @@ export function Hacknet({ ns }: { ns: NS }) {
 export function Sleeves({ ns }: { ns: NS }) {
   return <TimeTicker interval={2000} render={() =>
     <Section title='Sleeves'>
-      <Stat label='sleeve' value={`${ns.sleeve.getNumSleeves()}`} />
+      <Stat label='sleeve' value={`${ns.sleeve.getNumSleeves()} / 8`} />
     </Section>
   } />
 }

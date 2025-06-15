@@ -3,13 +3,11 @@ import { computeEarningsVelocity, execGW, execHWGW, getGWTime, getHWGWTime, padd
 import { list } from './lib/host.js';
 import { disableLogs } from './lib/log.js';
 import { formatTime, now } from './lib/time.js';
-import { syncScripts } from './lib/remote.js';
 
 export async function main(ns: NS): Promise<void> {
   disableLogs(ns, 'scp', 'exec', 'sleep', 'getServerMaxMoney', 'getServerMaxRam', 'getServerUsedRam', 'getHackingLevel', 'getServerMoneyAvailable', 'scan')
 
   for (; ;) {
-    syncScripts(ns)
 
     await HWGW(ns)
     await fill(ns)

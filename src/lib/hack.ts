@@ -1,13 +1,10 @@
-import { AutocompleteData, BasicHGWOptions, NS, ScriptArg } from '@ns';
-import { Flags } from './flag';
+import { BasicHGWOptions, NS, RunOptions } from '@ns';
 import { maxThreads } from './ram';
-import { isMyMachine } from './server';
-import { formatTime, milliFormat, now } from './time';
+import { deploy } from './deploy';
 
 export const hackScript = 'hack.js'
 export const growScript = 'grow.js'
 export const weakenScript = 'weaken.js'
-export const hackingScripts = [hackScript, growScript, weakenScript]
 export const hackRam = 1.6 + 0.1
 export const growRam = 1.6 + 0.15
 export const weakenRam = 1.6 + 0.15
@@ -51,19 +48,10 @@ export async function execHWGW(ns: NS, host: string, target: string, limitRam = 
     // |-|-|-|-|== weaken ==========================|
     //                         |== grow ==============|
     //             |== weaken ==========================|
-    const execAt = now()
-    ns.exec(hackScript, host, { threads },
-        formatTime(execAt + weakenTime - 1 * paddingTime, milliFormat),
-        ...toFlags({ host: target, additionalMsec: Math.max(0, (weakenTime - 1 * paddingTime) - hackTime) }))
-    ns.exec(weakenScript, host, { threads },
-        formatTime(execAt + weakenTime + 0 * paddingTime, milliFormat),
-        ...toFlags({ host: target, additionalMsec: Math.max(0, (weakenTime + 0 * paddingTime) - weakenTime) }))
-    ns.exec(growScript, host, { threads },
-        formatTime(execAt + weakenTime + 1 * paddingTime, milliFormat),
-        ...toFlags({ host: target, additionalMsec: Math.max(0, (weakenTime + 1 * paddingTime) - growTime) }))
-    ns.exec(weakenScript, host, { threads },
-        formatTime(execAt + weakenTime + 2 * paddingTime, milliFormat),
-        ...toFlags({ host: target, additionalMsec: Math.max(0, (weakenTime + 2 * paddingTime) - weakenTime) }))
+    deployHack(ns, host, { threads }, { host: target, additionalMsec: (weakenTime - 1 * paddingTime) - hackTime })
+    deployWeaken(ns, host, { threads }, { host: target, additionalMsec: (weakenTime + 0 * paddingTime) - weakenTime })
+    deployGrow(ns, host, { threads }, { host: target, additionalMsec: (weakenTime + 1 * paddingTime) - growTime })
+    deployWeaken(ns, host, { threads }, { host: target, additionalMsec: (weakenTime + 2 * paddingTime) - weakenTime })
     await ns.sleep(4 * paddingTime)
 
     return true
@@ -83,13 +71,8 @@ export async function execGW(ns: NS, host: string, target: string, limitRam = In
     //     |== weaken  =========================|
     //                   |== grow ================|
     // |-|-|-|-|== weaken ==========================|
-    const execAt = now()
-    ns.exec(growScript, host, { threads },
-        formatTime(execAt + weakenTime - 1 * paddingTime, milliFormat),
-        ...toFlags({ host: target, additionalMsec: Math.max(0, (weakenTime - 1 * paddingTime) - growTime) }))
-    ns.exec(weakenScript, host, { threads },
-        formatTime(execAt + weakenTime + 0 * paddingTime, milliFormat),
-        ...toFlags({ host: target, additionalMsec: Math.max(0, (weakenTime + 0 * paddingTime) - weakenTime) }))
+    deployGrow(ns, host, { threads }, { host: target, additionalMsec: (weakenTime - 1 * paddingTime) - growTime },)
+    deployGrow(ns, host, { threads }, { host: target, additionalMsec: (weakenTime + 0 * paddingTime) - weakenTime },)
     await ns.sleep(2 * paddingTime)
 
     return true
@@ -108,45 +91,18 @@ export function hasMoney(ns: NS, host: string) {
     return ns.getServerMoneyAvailable(host) > 0
 }
 
-interface RemoteHGWOptions extends BasicHGWOptions {
+export interface RemoteHGWOptions extends BasicHGWOptions {
     host: string
 }
 
-export const schema: Flags = [
-    ['host', ''],
-    ['threads', Infinity],
-    ['stock', false],
-    ['additionalMsec', 0],
-]
-
-export function toFlags(opt: RemoteHGWOptions): ScriptArg[] {
-    return [
-        '--host', opt.host,
-        ...(opt.threads !== undefined ? ['--threads', opt.threads] : []),
-        ...(opt.stock !== undefined ? ['--stock'] : []),
-        ...(opt.additionalMsec !== undefined ? ['--additionalMsec', opt.additionalMsec] : []),
-    ]
+export function deployHack(ns: NS, host: string, threadOrOptions: number | RunOptions, opts: RemoteHGWOptions) {
+    deploy(ns, hackScript, host, threadOrOptions, JSON.stringify(opts))
 }
 
-export function parseFlags(ns: NS): RemoteHGWOptions {
-    const flags = ns.flags(schema)
-
-    const host = flags.host as string
-    const threads = Math.min(flags.threads as number, ns.self().threads)
-    const stock = flags.stock as boolean
-    const additionalMsec = flags.additionalMsec as number
-
-    return {
-        host,
-        threads,
-        stock,
-        additionalMsec
-    }
+export function deployGrow(ns: NS, host: string, threadOrOptions: number | RunOptions, opts: RemoteHGWOptions) {
+    deploy(ns, growScript, host, threadOrOptions, JSON.stringify(opts))
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function autocomplete(data: AutocompleteData, args: ScriptArg[]) {
-    data.flags(schema)
-
-    return data.servers.filter(host => !isMyMachine(host))
+export function deployWeaken(ns: NS, host: string, threadOrOptions: number | RunOptions, opts: RemoteHGWOptions) {
+    deploy(ns, weakenScript, host, threadOrOptions, JSON.stringify(opts))
 }

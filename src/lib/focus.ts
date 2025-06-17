@@ -4,7 +4,7 @@ import { crimeForKarmaAndKill } from './crime';
 import { hasSimulacrum } from './bladeburner';
 import { autoGrafting, list } from './grafting';
 
-export async function autoSetAction(ns: NS) {
+export async function autoSetAction(ns: NS, enableGrafting = false) {
     if (ns.getPlayer().skills.hacking < 100) {
         setCourse(ns, 'Rothman University', 'Computer Science')
     } else if (!ns.gang.inGang() && ns.getPlayer().karma > -54000) {
@@ -13,7 +13,7 @@ export async function autoSetAction(ns: NS) {
         // Release focus to allow bladeburner.js to take over and
         // farm reputation for Simulacrum
         stopAction(ns)
-    } else if(list(ns, true).length > 0) {
+    } else if(enableGrafting && list(ns, true).length > 0) {
         await autoGrafting(ns)
     } else {
         setCourse(ns, 'ZB Institute of Technology', 'Algorithms')

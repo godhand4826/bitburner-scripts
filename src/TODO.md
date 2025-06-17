@@ -2,6 +2,9 @@
   - batch across different server for maximum ram usage
   - HWGW with 2 threads vs HWGW + HWGW
   - formula hacking?
+    - HWGW
+      - security min -> available money max ->
+      - W with 1 thread for each -> H with 1 thread each -> G
   - hwgw as one process, spawn four and kill four
   - return promise that wait stop running
   - kill all on farm is killed
@@ -65,4 +68,5 @@
   - by port
   - collapse same category notifications
   - toggle on/off
-- use JSON.parse to handle arg flags
+- distributed os for memory management
+  - execute task concurrency memory efficiency

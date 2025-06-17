@@ -10,7 +10,9 @@ export async function main(ns: NS): Promise<void> {
   for (; ;) {
 
     await HWGW(ns)
-    await fill(ns)
+    if (ns.getPlayer().skills.hacking > 1000) {
+      await fill(ns)
+    }
   }
 }
 

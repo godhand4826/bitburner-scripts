@@ -3,6 +3,7 @@ import { getBudget } from "./money";
 import { airlineTicketPrice } from "./travel";
 import { Course, getUniversityCity } from "./course";
 import { getGymCity, Workout } from "./gym";
+import { m } from "./const";
 
 export function autoSetAction(ns: NS) {
     for (let i = 0; i < ns.sleeve.getNumSleeves(); i++) {
@@ -14,8 +15,16 @@ export function autoSetAction(ns: NS) {
         } else if (ns.getPlayer().skills.hacking < 150) {
             setSleeveCourse(ns, i, 'ZB Institute of Technology', 'Computer Science')
         } else if (ns.getPlayer().skills.hacking < 340) {
+            if (getBudget(ns) < 50 * m) {
+                continue
+            }
+
             setSleeveCourse(ns, i, 'ZB Institute of Technology', 'Algorithms')
         } else {
+            if (getBudget(ns) < 50 * m) {
+                continue
+            }
+
             const skills = ns.getPlayer().skills
             let min = skills.strength
             let gymType = ns.enums.GymType.strength

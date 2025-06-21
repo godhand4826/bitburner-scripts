@@ -2,7 +2,6 @@ import { NS } from '@ns'
 import { b, m, t } from './lib/const'
 import { pkill } from './lib/remote'
 import { run as runHacknet } from './hacknet'
-import { run as runServer } from './server'
 import { run as runGang } from './gang'
 import { run as runFaction } from './faction'
 import { ready } from './lib/cdn'
@@ -24,7 +23,7 @@ export async function main(ns: NS): Promise<void> {
   runFaction(ns, 3)
   ns.run('stock.js')
   ns.run('sleeve.js')
-  runServer(ns, 1 * t, 200 * b)
+  ns.run('server.js')
   ns.run('backdoor.js')
   ns.run('bladeburner.js')
   runGang(ns, 1 * t, 100 * b)

@@ -33,13 +33,11 @@ export function upgradePurchasedServer(ns: NS, host: string, n = 1): boolean {
     return ns.upgradePurchasedServer(host, ns.getServerMaxRam(host) * (1 << n))
 }
 
-export function autoUpgradePurchasedServer(ns: NS, budgetLimit = Infinity, preservedMoney = 0, ramLimit = Infinity) {
-    ramLimit = Math.min(ramLimit, 2 << 20)
-
+export function autoUpgradePurchasedServer(ns: NS, budgetLimit = Infinity, preservedMoney = 0) {
     for (const host of ns.getPurchasedServers()) {
         while (
             getPurchasedServerUpgradeCost(ns, host) <= getBudget(ns, budgetLimit, preservedMoney) &&
-            ns.getServerMaxRam(host) << 1 <= ramLimit &&
+            ns.getServerMaxRam(host) << 1 <= 2 << 20 &&
             upgradePurchasedServer(ns, host)
         ) {
             ns.toast(`${host} RAM upgraded to ${ns.formatRam(ns.getServerMaxRam(host))}`)

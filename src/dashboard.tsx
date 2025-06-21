@@ -9,6 +9,7 @@ import { getBonusPercent, getSafeCheats } from './lib/go';
 import { getNextBlackOpRequiredRank, getOperationTimeReduction, getStaminaPercentage } from './lib/bladeburner';
 import { getSymbols, getTotalPosition } from './lib/stock';
 import { getAssets } from './lib/stock';
+import { percentageBarString } from './lib/tui';
 
 export async function main(ns: NS): Promise<void> {
   ns.disableLog('ALL')
@@ -70,7 +71,7 @@ export function Dashboard({ ns }: { ns: NS }) {
 export function Time() {
   return <TimeTicker interval={100} render={() => <>
     <Stat label='time' value={formatTime(now())} />
-    <Stat label='liveness' value={<ProgressBar value={(Math.sin(now() / 5000 * Math.PI * 2) + 1) / 2} />} />
+    <Stat label='liveness' value={<Bar value={(Math.sin(now() / 5000 * Math.PI * 2) + 1) / 2} />} />
   </>} />
 }
 
@@ -89,7 +90,7 @@ export function Home({ ns }: { ns: NS }) {
       <Stat label='ram' value={ns.formatRam(ns.getServerMaxRam('home'))} />
       <Stat label='cores' value={ns.getServer('home').cpuCores} />
       <Stat label='process' value={process.length} />
-      <Stat label='ram usage' value={<ProgressBar value={usedRam / maxRam} />} />
+      <Stat label='ram usage' value={<Bar value={usedRam / maxRam} />} />
     </Section>
   }} />
 }
@@ -272,23 +273,14 @@ export function Ticker({
   return <>{render()}</>
 }
 
-export function ProgressBar({
+export function Bar({
   value,
   width = 25,
 }: {
   value: number
   width?: number
 }) {
-  const fillChar = '|'
-  const emptyChar = '-'
-
-  const clamped = Math.min(Math.max(value, 0), 1)
-  const filled = Math.round(clamped * width)
-  const empty = width - filled
-
-  const bar = `[${fillChar.repeat(filled)}${emptyChar.repeat(empty)}]`
-
-  return <div style={{ marginLeft: '1em' }}>{bar}</div>
+  return <div style={{ marginLeft: '1em' }}>{percentageBarString(value, width)}</div>
 }
 
 export function Section({ title, children, opened = false }: {

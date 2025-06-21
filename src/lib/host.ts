@@ -32,12 +32,20 @@ export function list(ns: NS, opt: ListOptions = {}) {
     .sort(hostCompare)
 }
 
-// home first, purchased second, hacknet third, then by name (case-insensitive)
+// home first, hacknet second, purchased third, others order by name (case-insensitive)
 function hostCompare(a: string, b: string): number {
-  const aa = a.toLowerCase().replace(/^home/g, '(').replace(/^hacknet/g, ')')
-  const bb = b.toLowerCase().replace(/^home/g, '(').replace(/^hacknet/g, ')')
+  function _normalize(host: string): string {
+    return host.toLowerCase()
+      .replace(/^home$/g, '\u0000')
+      .replace(/^hacknet-server-(\d*)$/g, (_, index) => '\u0001' + index.padStart(2, '0'))
+      .replace(/^home-/g, '\u0002')
+  }
+
+  const aa = _normalize(a)
+  const bb = _normalize(b)
   return aa == bb ? 0 : (aa < bb ? -1 : +1)
 }
+
 
 export function find(ns: NS, dest: string, src = ns.self().server): string[] {
   function _scan(parent: string, host: string): string[] {

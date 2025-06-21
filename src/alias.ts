@@ -5,9 +5,7 @@ export async function main(ns: NS): Promise<void> {
     [
         ["m", "home; ./main.js; clear"],
         ["h", "home"],
-        ["bl", "buy -l"],
-        ["ba", "buy -a"],
-        ["ssh", "./ssh.js"],
+        ["ssh", "home; ./ssh.js"],
         ["pkill", "./pkill.js"],
     ].forEach(([name, command]) => run(`alias ${name}='${command}'`))
 

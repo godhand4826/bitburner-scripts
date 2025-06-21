@@ -21,7 +21,17 @@ export function computeEarningsVelocity(ns: NS, host: string) {
 }
 
 export function computePotential(ns: NS, host: string): number {
-    return maxMoney(ns, host) / getHWGWTime(ns, host)
+    // simulate a hack on the target server as if it has max money and min difficulty
+    const p = ns.getPlayer()
+    const s = ns.getServer(host)
+    s.moneyAvailable = s.moneyMax
+    s.hackDifficulty = s.minDifficulty
+
+    const chance = ns.formulas.hacking.hackChance(s, p)
+    const money = maxMoney(ns, host)
+    const percent = ns.formulas.hacking.hackPercent(s, p)
+    const time = ns.formulas.hacking.weakenTime(s, p) + 2 * paddingTime
+    return chance * percent * money / time
 }
 
 export function getHWGWTime(ns: NS, host: string) {

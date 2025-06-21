@@ -10,9 +10,6 @@ export async function main(ns: NS): Promise<void> {
   for (; ;) {
 
     await HWGW(ns)
-    if (ns.getPlayer().skills.hacking > 2500) {
-      await fill(ns)
-    }
   }
 }
 
@@ -20,10 +17,7 @@ export async function HWGW(ns: NS): Promise<void> {
   const batchPaddingTime = 200
 
   const targets = list(ns, { onlyNuked: true })
-    // .map(host => [host, computeEarningsVelocity(ns, host)] as [string, number])
-    .map(host => [host, computePotential(ns, host)] as [string, number])
-    .sort((a, b) => a[1] - b[1])
-    .map(([host]) => host)
+    .sort((a, b) => computePotential(ns, a) - computePotential(ns, b))
 
   console.assert(targets.length > 0)
 

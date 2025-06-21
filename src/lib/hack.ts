@@ -101,15 +101,15 @@ export function isHackable(ns: NS, host: string) {
 }
 
 export function requiredHackingSkill(ns: NS, host: string) {
-    return ns.getServer(host).requiredHackingSkill ?? Infinity
+    return ns.getServer(host).requiredHackingSkill ?? 0
 }
 
 export function hackDifficulty(ns: NS, host: string): number {
-    return ns.getServer(host).hackDifficulty ?? Infinity
+    return ns.getServer(host).hackDifficulty ?? 0
 }
 
 export function minHackDifficulty(ns: NS, host: string): number {
-    return ns.getServer(host).minDifficulty ?? Infinity
+    return ns.getServer(host).minDifficulty ?? 0
 }
 
 export function numOpenPortsRequired(ns: NS, host: string): number {

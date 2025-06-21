@@ -1,9 +1,7 @@
 import { NS } from '@ns';
 import { forever, now } from './lib/time';
-import { TimeTicker } from './dashboard';
-
-import { ReactDOM } from './lib/react'
-import React from './lib/react'
+import React, { ReactDOM } from './lib/react'
+import { TimeTicker } from './lib/ui';
 
 export async function main(ns: NS): Promise<void> {
     ns.disableLog('ALL')

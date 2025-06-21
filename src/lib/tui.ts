@@ -27,7 +27,7 @@ export function barString(
     fillChar = defaultFillChar,
     emptyChar = defaultEmptyChar,
 ): string {
-    return percentageBarString(current / max, width, fillChar, emptyChar);
+    return percentageBarString(current / Math.max(1e-9, max), width, fillChar, emptyChar);
 }
 
 export function booleanString(value: boolean): string {

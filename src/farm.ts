@@ -1,5 +1,5 @@
 import { NS } from '@ns';
-import { computeEarningsVelocity, execGW, execHWGW, getGWTime, getHWGWTime, isHackable, paddingTime } from './lib/hack.js'
+import { computeEarningsVelocity, computePotential, execGW, execHWGW, getGWTime, getHWGWTime, isHackable, paddingTime } from './lib/hack.js'
 import { list } from './lib/host.js';
 import { disableLogs } from './lib/log.js';
 import { formatTime, now } from './lib/time.js';
@@ -20,7 +20,8 @@ export async function HWGW(ns: NS): Promise<void> {
   const batchPaddingTime = 200
 
   const targets = list(ns, { onlyNuked: true })
-    .map(host => [host, computeEarningsVelocity(ns, host)] as [string, number])
+    // .map(host => [host, computeEarningsVelocity(ns, host)] as [string, number])
+    .map(host => [host, computePotential(ns, host)] as [string, number])
     .sort((a, b) => a[1] - b[1])
     .map(([host]) => host)
 
@@ -34,7 +35,7 @@ export async function HWGW(ns: NS): Promise<void> {
   ns.toast(`Batch hacking ${target} will complete in ${ns.tFormat(batchTime)} at ${formatTime(completeAt)}`, 'info', batchTime + 2000)
 
   let batches = 0
-  for (const host of list(ns, { onlyNuked: true, includePurchased: true, includeHome: true })) {
+  for (const host of list(ns, { onlyNuked: true, includePurchased: true, includeHome: true, includeHacknet: true })) {
     const preservedRam = host == 'home' ? 16 : 0
     const isDeployed = await execHWGW(ns, host, target, Infinity, preservedRam)
     batches += isDeployed ? 1 : 0;
@@ -73,7 +74,7 @@ export async function GW(ns: NS): Promise<boolean> {
   ns.toast(`Batch growing ${target} will complete in ${ns.tFormat(batchTime)} at ${formatTime(completeAt)}`, 'info', batchTime + 2000)
 
   let batches = 0
-  for (const host of list(ns, { onlyNuked: true, includePurchased: true, includeHome: true })) {
+  for (const host of list(ns, { onlyNuked: true, includePurchased: true, includeHome: true, includeHacknet: true })) {
     const preservedRam = host == 'home' ? 16 : 0
     const isDeployed = await execGW(ns, host, target, Infinity, preservedRam)
     batches += isDeployed ? 1 : 0;

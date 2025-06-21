@@ -20,6 +20,10 @@ export function computeEarningsVelocity(ns: NS, host: string) {
     return speed
 }
 
+export function computePotential(ns: NS, host: string): number {
+    return maxMoney(ns, host) / getHWGWTime(ns, host)
+}
+
 export function getHWGWTime(ns: NS, host: string) {
     return ns.getWeakenTime(host) + 2 * paddingTime
 }

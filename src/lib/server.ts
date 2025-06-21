@@ -1,6 +1,8 @@
 import { NS } from '@ns'
 import { getBudget } from './money'
 
+export const maxPurchasedServers = 25
+
 export function purchaseServer(ns: NS, ram = 2): string {
     const len = ns.getPurchasedServers().length
     const id = len + 1
@@ -22,6 +24,7 @@ export function getPurchasedServerCost(ns: NS, n = 1): number {
 export function autoPurchasedServer(ns: NS, budgetLimit = Infinity, preservedMoney = 0) {
     let host = ''
     while (
+        ns.getPurchasedServers().length < maxPurchasedServers &&
         getPurchasedServerCost(ns) <= getBudget(ns, budgetLimit, preservedMoney) &&
         (host = purchaseServer(ns)) != ''
     ) {
@@ -36,8 +39,8 @@ export function upgradePurchasedServer(ns: NS, host: string, n = 1): boolean {
 export function autoUpgradePurchasedServer(ns: NS, budgetLimit = Infinity, preservedMoney = 0) {
     for (const host of ns.getPurchasedServers()) {
         while (
+            ns.getServerMaxRam(host) << 1 <= ns.getPurchasedServerMaxRam() &&
             getPurchasedServerUpgradeCost(ns, host) <= getBudget(ns, budgetLimit, preservedMoney) &&
-            ns.getServerMaxRam(host) << 1 <= 2 << 20 &&
             upgradePurchasedServer(ns, host)
         ) {
             ns.toast(`${host} RAM upgraded to ${ns.formatRam(ns.getServerMaxRam(host))}`)

@@ -14,7 +14,7 @@ export async function main(ns: NS): Promise<void> {
 }
 
 export async function HWGW(ns: NS): Promise<void> {
-  const batchPaddingTime = 200
+  const batchPaddingTime = 500
 
   const targets = list(ns, { onlyNuked: true })
     .sort((a, b) => computePotential(ns, a) - computePotential(ns, b))

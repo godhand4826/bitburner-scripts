@@ -1,4 +1,4 @@
-export function run(cmd: string) {
+export function run(cmd: string): void {
     const doc = eval('document') as Document;
 
     // Acquire a reference to the terminal text field
@@ -12,13 +12,14 @@ export function run(cmd: string) {
     const handler = Object.keys(terminalInput)[1];
 
     // If triggered by another UI event, executing immediately might not work properly
-    setTimeout(() => {
+    // use `setTimeout(() => run(), 0)` to ensure the command is processed correctly.
+    {
         // Perform an onChange event to set some internal values.
         terminalInput[handler].onChange({ target: terminalInput });
 
         // Simulate an enter press
         terminalInput[handler].onKeyDown({ key: 'Enter', preventDefault: () => null });
-    }, 0);
+    }
 }
 
 export function isDisabled(): boolean {

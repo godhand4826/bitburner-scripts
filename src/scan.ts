@@ -15,7 +15,7 @@ export async function main(ns: NS): Promise<void> {
                 React.createElement("a", {
                     style: { color: 'rgb(0, 204, 0)' },
                     href: `javascript:navigator.clipboard.writeText("${cmd}");`,
-                    onClick: () => run(cmd),
+                    onClick: () => setTimeout(() => run(cmd), 0),
                 }, host)
             )
         });

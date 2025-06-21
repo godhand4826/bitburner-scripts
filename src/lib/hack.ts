@@ -71,13 +71,16 @@ export async function execGW(ns: NS, host: string, target: string, limitRam = In
     //     |== weaken  =========================|
     //                   |== grow ================|
     // |-|-|-|-|== weaken ==========================|
-    deployGrow(ns, host, { threads }, { host: target, additionalMsec: (weakenTime - 1 * paddingTime) - growTime },)
-    deployGrow(ns, host, { threads }, { host: target, additionalMsec: (weakenTime + 0 * paddingTime) - weakenTime },)
+    deployGrow(ns, host, { threads }, { host: target, additionalMsec: (weakenTime - 1 * paddingTime) - growTime })
+    deployWeaken(ns, host, { threads }, { host: target, additionalMsec: (weakenTime + 0 * paddingTime) - weakenTime })
     await ns.sleep(2 * paddingTime)
 
     return true
 }
 
+export function isBackdoorInstalled(ns: NS, host: string): boolean {
+    return ns.getServer(host).backdoorInstalled ?? false
+}
 
 export function isHackable(ns: NS, host: string) {
     return requiredHackingSkill(ns, host) <= ns.getHackingLevel()
@@ -85,6 +88,54 @@ export function isHackable(ns: NS, host: string) {
 
 export function requiredHackingSkill(ns: NS, host: string) {
     return ns.getServer(host).requiredHackingSkill ?? Infinity
+}
+
+export function hackDifficulty(ns: NS, host: string): number {
+    return ns.getServer(host).hackDifficulty ?? Infinity
+}
+
+export function minHackDifficulty(ns: NS, host: string): number {
+    return ns.getServer(host).minDifficulty ?? Infinity
+}
+
+export function numOpenPortsRequired(ns: NS, host: string): number {
+    return ns.getServer(host).numOpenPortsRequired ?? Infinity
+}
+
+export function moneyAvailable(ns: NS, host: string): number {
+    return ns.getServer(host).moneyAvailable ?? 0
+}
+
+export function maxMoney(ns: NS, host: string): number {
+    return ns.getServer(host).moneyMax ?? 0
+}
+
+export function hasAdminRights(ns: NS, host: string): boolean {
+    return ns.getServer(host).hasAdminRights
+}
+
+export function isSshPortOpen(ns: NS, host: string): boolean {
+    return ns.getServer(host).sshPortOpen
+}
+
+export function isFtpPortOpen(ns: NS, host: string): boolean {
+    return ns.getServer(host).ftpPortOpen
+}
+
+export function isSmtpPortOpen(ns: NS, host: string): boolean {
+    return ns.getServer(host).smtpPortOpen
+}
+
+export function isHttpPortOpen(ns: NS, host: string): boolean {
+    return ns.getServer(host).httpPortOpen
+}
+
+export function isSqlPortOpen(ns: NS, host: string): boolean {
+    return ns.getServer(host).sqlPortOpen
+}
+
+export function getOrganizationName(ns: NS, host: string): string {
+    return ns.getServer(host).organizationName
 }
 
 export function hasMoney(ns: NS, host: string) {

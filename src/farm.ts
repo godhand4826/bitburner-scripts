@@ -1,5 +1,5 @@
 import { NS } from '@ns';
-import { computeEarningsVelocity, execGW, execHWGW, getGWTime, getHWGWTime, paddingTime } from './lib/hack.js'
+import { computeEarningsVelocity, execGW, execHWGW, getGWTime, getHWGWTime, isHackable, paddingTime } from './lib/hack.js'
 import { list } from './lib/host.js';
 import { disableLogs } from './lib/log.js';
 import { formatTime, now } from './lib/time.js';
@@ -10,7 +10,7 @@ export async function main(ns: NS): Promise<void> {
   for (; ;) {
 
     await HWGW(ns)
-    if (ns.getPlayer().skills.hacking > 1000) {
+    if (ns.getPlayer().skills.hacking > 2500) {
       await fill(ns)
     }
   }
@@ -57,8 +57,9 @@ export async function GW(ns: NS): Promise<boolean> {
   const batchPaddingTime = 200
 
   const targets = list(ns, { onlyNuked: true })
+    .filter(host => (ns.getServer(host).moneyAvailable ?? 0) < ns.getServerMaxMoney(host))
+    .filter(host => isHackable(ns, host))
     .map(host => [host, computeEarningsVelocity(ns, host)] as [string, number])
-    .filter(([host]) => (ns.getServer(host).moneyAvailable ?? 0) < ns.getServerMaxMoney(host))
     .sort((a, b) => a[1] - b[1])
     .map(([host]) => host)
 

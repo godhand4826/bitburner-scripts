@@ -70,3 +70,7 @@
   - toggle on/off
 - distributed os for memory management
   - execute task concurrency memory efficiency
+- preload and store info in ports
+- create memory snapshot of status
+- determine home pc by organization name
+- scan-analyze script (maybe another dashboard)

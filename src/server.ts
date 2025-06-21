@@ -7,8 +7,8 @@ export async function main(ns: NS): Promise<void> {
     disableLogs(ns, 'getServerMoneyAvailable', 'getServerMaxRam', 'sleep')
 
     while (!isPurchasedServersFullyUpgraded(ns)) {
-        autoPurchasedServer(ns, Infinity, getBudget(ns, Infinity) / 0.50)
-        autoUpgradePurchasedServer(ns, Infinity, getBudget(ns, Infinity) / 0.50)
+        autoPurchasedServer(ns, Infinity, getBudget(ns, Infinity) * 0.50)
+        autoUpgradePurchasedServer(ns, Infinity, getBudget(ns, Infinity) * 0.50)
 
         await ns.sleep(2000)
     }

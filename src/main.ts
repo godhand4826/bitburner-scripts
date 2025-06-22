@@ -5,15 +5,15 @@ import { run as runHacknet } from './hacknet'
 import { run as runGang } from './gang'
 import { run as runFaction } from './faction'
 import { ready } from './lib/cdn'
-import { maxThreads } from './lib/ram'
 
 export async function main(ns: NS): Promise<void> {
   await ready()
 
   pkill(ns)
 
-  ns.run('stanek.js', maxThreads(ns, 'home', ns.getScriptRam('stanek.js'), Infinity, 500))
-  ns.run('focus.js')
+  ns.run('stanek.js', 1)
+  ns.run('focus.js', 1)
+  ns.run('scan.js')
   ns.run('darkweb.js')
   ns.run('nuke.js')
   ns.run('farm.js')

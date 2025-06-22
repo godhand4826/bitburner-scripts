@@ -74,3 +74,4 @@
 - create memory snapshot of status
 - determine home pc by organization name
 - scan-analyze script (maybe another dashboard)
+- use capped max thread to grow to max hack to empty

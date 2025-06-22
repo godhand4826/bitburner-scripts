@@ -161,13 +161,16 @@ export interface RemoteHGWOptions extends BasicHGWOptions {
 }
 
 export function deployHack(ns: NS, host: string, threadOrOptions: number | RunOptions, opts: RemoteHGWOptions) {
+    opts.additionalMsec = Math.max(0, opts.additionalMsec ?? 0)
     deploy(ns, hackScript, host, threadOrOptions, JSON.stringify(opts))
 }
 
 export function deployGrow(ns: NS, host: string, threadOrOptions: number | RunOptions, opts: RemoteHGWOptions) {
+    opts.additionalMsec = Math.max(0, opts.additionalMsec ?? 0)
     deploy(ns, growScript, host, threadOrOptions, JSON.stringify(opts))
 }
 
 export function deployWeaken(ns: NS, host: string, threadOrOptions: number | RunOptions, opts: RemoteHGWOptions) {
+    opts.additionalMsec = Math.max(0, opts.additionalMsec ?? 0)
     deploy(ns, weakenScript, host, threadOrOptions, JSON.stringify(opts))
 }

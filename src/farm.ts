@@ -29,7 +29,7 @@ export async function HWGW(ns: NS): Promise<void> {
   ns.toast(`Batch hacking ${target} will complete in ${ns.tFormat(batchTime)} at ${formatTime(completeAt)}`, 'info', batchTime + 2000)
 
   let batches = 0
-  for (const host of list(ns, { onlyNuked: true, includePurchased: true, includeHome: true, includeHacknet: true })) {
+  for (const host of list(ns, { onlyNuked: true, includePurchased: true, includeHome: true, includeHacknet: false})) {
     const preservedRam = host == 'home' ? 16 : 0
     const isDeployed = await execHWGW(ns, host, target, Infinity, preservedRam)
     batches += isDeployed ? 1 : 0;

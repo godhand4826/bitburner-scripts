@@ -5,8 +5,7 @@ import { hasSimulacrum } from './bladeburner';
 import { autoGrafting, list } from './grafting';
 
 export async function autoSetAction(ns: NS, enableGrafting = false) {
-    const p = ns.getPlayer()
-    if (p.numPeopleKilled < 30) {
+    if (!ns.bladeburner.inBladeburner() && ns.getPlayer().numPeopleKilled < 1000) {
         autoSetCrimeForMoney(ns)
     } else if (ns.getPlayer().skills.hacking < 100) {
         setCourse(ns, 'Rothman University', 'Computer Science')

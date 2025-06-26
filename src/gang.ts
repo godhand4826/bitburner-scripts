@@ -12,10 +12,12 @@ export async function main(ns: NS): Promise<void> {
 
     disableLogs(ns, 'sleep', 'gang.createGang', 'getServerMoneyAvailable', 'gang.renameMember')
 
+    const factionName = ns.enums.FactionName.TheBlackHand
+    // const factionName = ns.enums.FactionName.SpeakersForTheDead
     while (!ns.gang.inGang()) {
-        // if (ns.gang.createGang(ns.enums.FactionName.NiteSec)) {
-        //     ns.tprint(`Successfully create gang with ${ns.gang.getGangInformation().faction}`)
-        // }
+        if (ns.gang.createGang(factionName)) {
+            ns.tprint(`Successfully create gang with ${ns.gang.getGangInformation().faction}`)
+        }
 
         await ns.sleep(2000)
     }

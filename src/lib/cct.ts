@@ -122,7 +122,7 @@ export function getSolverFn(ns: NS, contractType: string): any {
     case ns.enums.CodingContractName.FindAllValidMathExpressions:
       return findAllValidMathExpressions;
     case ns.enums.CodingContractName.HammingCodesIntegerToEncodedBinary:
-      return null; // hammingCodesIntegerToEncodedBinary;
+      return hammingCodesIntegerToEncodedBinary;
     case ns.enums.CodingContractName.HammingCodesEncodedBinaryToInteger:
       return null; // hammingCodesEncodedBinaryToInteger;
     case ns.enums.CodingContractName.Proper2ColoringOfAGraph:
@@ -476,6 +476,52 @@ export function findAllValidMathExpressions([s, n]: [string, number]) {
       }
     }
   }
+}
+
+function hammingCodesIntegerToEncodedBinary(n: number) {
+  // convert number to binary string
+  const data = n.toString(2).split('');
+  const dataSize = data.length;
+
+  // calculate parity bits and total bits
+  let m = 0;
+  while ((1 << m) - m - 1 <= dataSize) {
+    m += 1;
+  }
+  const globalParityBit = 1;
+  const parityBits = m + globalParityBit;
+  const totalBits = dataSize + parityBits;
+
+  // fill data bits
+  const code = Array(totalBits).fill('_');
+  for (let i = 1; i < code.length; i++) {
+    // skip power-of-two indices
+    if ((i & (i - 1)) === 0) {
+      continue;
+    }
+
+    code[i] = data.shift();
+  }
+
+  // fill parity bits at power-of-two positions
+  for (let i = 1; i < code.length; i <<= 1) {
+    let xor = 0;
+    for (let j = i + 1; j < code.length; j++) {
+      if ((((j - i) / i) & 1) === 0) {
+        xor ^= code[j];
+      }
+    }
+    code[i] = xor;
+  }
+
+  // set global parity bit at index 0
+  let xor = 0;
+  for (let i = 1; i < code.length; i++) {
+    xor ^= code[i];
+  }
+  code[0] = xor;
+
+  return code.join('');
 }
 
 export function proper2ColoringOfAGraph([n, edges]: [number, number[][]]) {

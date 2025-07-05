@@ -478,48 +478,50 @@ export function findAllValidMathExpressions([s, n]: [string, number]) {
   }
 }
 
-export function hammingCodesIntegerToEncodedBinary(n: number) {
-  // convert number to binary string
-  const data = n.toString(2).split('');
-  const dataSize = data.length;
+const xor = (a: number, b: number) => a ^ b;
 
-  // calculate parity bits and total bits
-  let m = 0;
-  while ((1 << m) - m - 1 <= dataSize) {
-    m += 1;
+export function hammingCodesIntegerToEncodedBinary(n: number) {
+  // helper functions
+  const parityBits = (dataBits: number) => {
+    let m = 0;
+    while ((1 << m) - m - 1 <= dataBits) {
+      m += 1;
+    }
+
+    // additional parity for SEC-DED (single error correction, double error detection)
+    return m + 1;
   }
-  const globalParityBit = 1;
-  const parityBits = m + globalParityBit;
-  const totalBits = dataSize + parityBits;
+
+  // convert number to binary string
+  const data = n.toString(2).split('').map(Number);
+  const dataBits = data.length;
+
+  // calculate total bits for extended hamming code binary array
+  const totalBits = dataBits + parityBits(dataBits);
+  const code: number[] = Array(totalBits).fill(0);
 
   // fill data bits
-  const code = Array(totalBits).fill('_');
-  for (let i = 1; i < code.length; i++) {
-    // skip power-of-two indices
+  for (let i = 1; i < totalBits; i++) {
+    // skip parity indices
     if ((i & (i - 1)) === 0) {
       continue;
     }
 
-    code[i] = data.shift();
+    code[i] = data.shift() as number;
   }
 
   // fill parity bits at power-of-two positions
-  for (let i = 1; i < code.length; i <<= 1) {
-    let xor = 0;
-    for (let j = i + 1; j < code.length; j++) {
-      if ((((j - i) / i) & 1) === 0) {
-        xor ^= code[j];
-      }
-    }
-    code[i] = xor;
+  const parity = code
+    .map((b, i) => [b, i])
+    .filter(([b]) => b === 1)
+    .map(([, i]) => i)
+    .reduce(xor);
+  for (let i = 0; 1 << i < totalBits; i++) {
+    code[1 << i] = (parity >> i) & 1;
   }
 
-  // set global parity bit at index 0
-  let xor = 0;
-  for (let i = 1; i < code.length; i++) {
-    xor ^= code[i];
-  }
-  code[0] = xor;
+  // set parity bit at index 0
+  code[0] = code.reduce(xor);
 
   return code.join('');
 }
@@ -529,48 +531,40 @@ export function hammingCodesEncodedBinaryToInteger(s: string) {
     throw new Error(`${s} is not binary string`);
   }
 
-  const code = s.split('').map((c) => Number(c));
-
-  // collect parity bits at power-of-two positions
-  let sum = 0;
-  for (let i = 1; i < code.length; i <<= 1) {
-    let xor = 0;
-    for (let j = i; j < code.length; j++) {
-      if ((((j - i) / i) & 1) === 0) {
-        xor ^= code[j];
-      }
-    }
-
-    if (xor != 0) {
-      sum += i;
-    }
-  }
+  const code = s.split('').map(Number);
 
   // collect parity bit at index 0
-  const totalParity = code.reduce((xor, d) => xor ^ d, 0);
+  const p = code.reduce(xor);
 
-  // check and correct
-  if (sum != 0 && totalParity == 0) {
-    // double-error detected
-    throw new Error(`double-error detected: ${s}`);
-  } else if (sum != 0) {
-    // single-error correcting
-    code[sum] = code[sum] ^ 1;
+  // collect parity bits at power-of-two positions
+  const parity = code
+    .map((b, i) => [b, i])
+    .filter(([b]) => b == 1)
+    .map(([, i]) => i)
+    .reduce(xor);
+
+  // apply SEC-DED (single error correction, double error detection)
+  if (parity !== 0) {
+    if (p !== 0) {
+      // single-error correcting
+      code[parity] ^= 1;
+    } else {
+      // double-error detected
+      throw new Error(`double-error detected`);
+    }
   }
 
   // collect data bits
-  const data: string[] = [];
+  const data: number[] = [];
   for (let i = 1; i < code.length; i++) {
     if ((i & (i - 1)) === 0) {
       continue;
     }
-    data.push(code[i].toString());
+    data.push(code[i]);
   }
 
   return parseInt(data.join(''), 2);
 }
-
-
 
 export function proper2ColoringOfAGraph([n, edges]: [number, number[][]]) {
   const adj: number[][] = Array(n).fill(null).map(() => [])

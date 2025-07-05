@@ -124,7 +124,7 @@ export function getSolverFn(ns: NS, contractType: string): any {
     case ns.enums.CodingContractName.HammingCodesIntegerToEncodedBinary:
       return hammingCodesIntegerToEncodedBinary;
     case ns.enums.CodingContractName.HammingCodesEncodedBinaryToInteger:
-      return null; // hammingCodesEncodedBinaryToInteger;
+      return hammingCodesEncodedBinaryToInteger;
     case ns.enums.CodingContractName.Proper2ColoringOfAGraph:
       return proper2ColoringOfAGraph;
     case ns.enums.CodingContractName.CompressionIRLECompression:
@@ -478,7 +478,7 @@ export function findAllValidMathExpressions([s, n]: [string, number]) {
   }
 }
 
-function hammingCodesIntegerToEncodedBinary(n: number) {
+export function hammingCodesIntegerToEncodedBinary(n: number) {
   // convert number to binary string
   const data = n.toString(2).split('');
   const dataSize = data.length;
@@ -523,6 +523,54 @@ function hammingCodesIntegerToEncodedBinary(n: number) {
 
   return code.join('');
 }
+
+export function hammingCodesEncodedBinaryToInteger(s: string) {
+  if (s.match(/[^01]/)) {
+    throw new Error(`${s} is not binary string`);
+  }
+
+  const code = s.split('').map((c) => Number(c));
+
+  // collect parity bits at power-of-two positions
+  let sum = 0;
+  for (let i = 1; i < code.length; i <<= 1) {
+    let xor = 0;
+    for (let j = i; j < code.length; j++) {
+      if ((((j - i) / i) & 1) === 0) {
+        xor ^= code[j];
+      }
+    }
+
+    if (xor != 0) {
+      sum += i;
+    }
+  }
+
+  // collect parity bit at index 0
+  const totalParity = code.reduce((xor, d) => xor ^ d, 0);
+
+  // check and correct
+  if (sum != 0 && totalParity == 0) {
+    // double-error detected
+    throw new Error(`double-error detected: ${s}`);
+  } else if (sum != 0) {
+    // single-error correcting
+    code[sum] = code[sum] ^ 1;
+  }
+
+  // collect data bits
+  const data: string[] = [];
+  for (let i = 1; i < code.length; i++) {
+    if ((i & (i - 1)) === 0) {
+      continue;
+    }
+    data.push(code[i].toString());
+  }
+
+  return parseInt(data.join(''), 2);
+}
+
+
 
 export function proper2ColoringOfAGraph([n, edges]: [number, number[][]]) {
   const adj: number[][] = Array(n).fill(null).map(() => [])

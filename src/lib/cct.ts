@@ -147,7 +147,7 @@ export function getSolverFn(ns: NS, contractType: string): any {
 export function findLargestPrimeFactor(n: number) {
   let max = 1
   for (let i = 2; i <= Math.sqrt(n); i++) {
-    while (n % i == 0) {
+    while (n % i === 0) {
       max = i
       n /= i
     }
@@ -198,7 +198,7 @@ export function totalWaysToSumII([target, array]: [number, number[]]) {
   return ways(0, target);
 
   function ways(index: number, target: number) {
-    if (index == array.length) {
+    if (index === array.length) {
       return target == 0 ? 1 : 0;
     }
 
@@ -262,7 +262,7 @@ export function mergeOverlappingIntervals(intervals: number[][]) {
   intervals.sort((a, b) => a[0] - b[0]);
   const result: number[][] = [];
   for (const interval of intervals) {
-    if (result.length == 0 || result[result.length - 1][1] < interval[0]) {
+    if (result.length === 0 || result[result.length - 1][1] < interval[0]) {
       result.push(interval);
     } else {
       result[result.length - 1][1] = Math.max(result[result.length - 1][1], interval[1]);
@@ -277,7 +277,7 @@ export function generateIPAddresses(s: string) {
   return result
 
   function dfs(i: number, count: number, current: string) {
-    if (count == 4) {
+    if (count === 4) {
       if (i == s.length) {
         result.push(current)
       }
@@ -425,7 +425,7 @@ export function sanitizeParenthesesInExpression(s: string) {
 
   function dfs(i: number, open: number, current: string) {
     if (i == s.length) {
-      if (open == 0) {
+      if (open === 0) {
         result.add(current)
       }
       return
@@ -450,8 +450,8 @@ export function findAllValidMathExpressions([s, n]: [string, number]) {
   return result
 
   function dfs(expr: string, i: number, value: number, lastOperand: number) {
-    if (i == s.length) {
-      if (value == n) {
+    if (i === s.length) {
+      if (value === n) {
         result.push(expr);
       }
       return
@@ -459,7 +459,7 @@ export function findAllValidMathExpressions([s, n]: [string, number]) {
 
     // try all possible digits from s[i:i+1] to s[i:s.length]
     for (let j = i; j < s.length; j++) {
-      if (s[i] == '0' && j != i) {
+      if (s[i] === '0' && j != i) {
         // skip leading zero
         break;
       }
@@ -575,14 +575,14 @@ export function proper2ColoringOfAGraph([n, edges]: [number, number[][]]) {
 
   const color = Array(n).fill(-1)
   for (let i = 0; i < n; i++) {
-    if (color[i] == -1 && !colorNode(i, 0)) {
+    if (color[i] === -1 && !colorNode(i, 0)) {
       return []
     }
   }
   return color
 
   function colorNode(n: number, c: number): boolean {
-    if (color[n] == c) {
+    if (color[n] === c) {
       return true
     }
 
@@ -631,19 +631,14 @@ export function compressionIILZDecompression(s: string) {
   return result;
 }
 
-export function encryptionICaesarCipher([plaintext, leftShift]: [string, number]) {
-  const c2i = (c: string) => c.charCodeAt(0) - 'A'.charCodeAt(0)
-  const i2c = (i: number) => String.fromCharCode(i + 'A'.charCodeAt(0))
+const c2i = (c: string) => c.charCodeAt(0) - 'A'.charCodeAt(0)
+const i2c = (i: number) => String.fromCharCode(i + 'A'.charCodeAt(0))
 
-  return plaintext
-    .split('')
-    .map(c => c == ' ' ? c : i2c((c2i(c) - leftShift + 26) % 26))
-    .join('')
+export function encryptionICaesarCipher([plaintext, leftShift]: [string, number]) {
+  return plaintext.split('').map(c => c === ' ' ? c : i2c((c2i(c) - leftShift + 26) % 26)).join('')
 }
 
 export function encryptionIIVigenereCipher([plaintext, key]: string[]) {
-  const c2i = (c: string) => c.charCodeAt(0) - 'A'.charCodeAt(0)
-  const i2c = (i: number) => String.fromCharCode(i + 'A'.charCodeAt(0))
   return plaintext.split('').map((c, i) => i2c((c2i(c) + c2i(key[i % key.length])) % 26)).join('')
 }
 

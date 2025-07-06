@@ -132,7 +132,7 @@ export function getSolverFn(ns: NS, contractType: string): any {
     case ns.enums.CodingContractName.CompressionIILZDecompression:
       return compressionIILZDecompression;
     case ns.enums.CodingContractName.CompressionIIILZCompression:
-      return null; // compressionIIILZCompression;
+      return compressionIIILZCompression;
     case ns.enums.CodingContractName.EncryptionICaesarCipher:
       return encryptionICaesarCipher;
     case ns.enums.CodingContractName.EncryptionIIVigenereCipher:
@@ -629,6 +629,51 @@ export function compressionIILZDecompression(s: string) {
     }
   }
   return result;
+}
+
+function compressionIIILZCompression(s: string) {
+  // simulates worst-case legal compression where each character is encoded as "1<char>0"
+  const INF = '1a0'.repeat(s.length);
+  const minS = (a: string, b: string) => (a.length <= b.length ? a : b);
+  const N = s.length;
+
+  const cache = new Map();
+  const asKey = (i: number, t: boolean, z: boolean) => (i << 2) | (Number(t) << 1) | (Number(z) << 0);
+
+  return dp(0, true, false);
+
+  // Computes the minimum compression of s[i:]
+  // - `t`: the current chunk type (true = literal, false = reference)
+  // - `z`: whether the previous chunk had length of 0 (used to reject ineffective compression)
+  function dp(i: number, t: boolean, z: boolean): string {
+    if (i >= N) return '';
+
+    const key = asKey(i, t, z);
+    if (cache.has(key)) return cache.get(key);
+
+    // skip current chunk
+    let min = z ? INF : `${0}${dp(i, !t, true)}`;
+
+    for (let L = 1; L <= Math.min(9, N - i); L++) {
+      if (t) {
+        // literal chunk
+        min = minS(min, `${L}${s.slice(i, i + L)}${dp(i + L, !t, false)}`);
+      } else {
+        // reference chunk
+        for (let X = 1; X <= Math.min(i, 9); X++) {
+          if (s.slice(i, i + L) === s.slice(i - X, i - X + L)) {
+            min = minS(min, `${L}${X}${dp(i + L, !t, false)}`);
+
+            // other valid X will result in the same length
+            break;
+          }
+        }
+      }
+    }
+
+    cache.set(key, min);
+    return min;
+  }
 }
 
 const c2i = (c: string) => c.charCodeAt(0) - 'A'.charCodeAt(0)

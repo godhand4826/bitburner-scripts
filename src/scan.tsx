@@ -115,7 +115,7 @@ export function Host({ ns, host }: { ns: NS, host: string }) {
         // backdoor
         `${booleanString(isBackdoorInstalled(ns, host))}`,
         // security
-        `${Math.round(hackDifficulty(ns, host)).toString().padStart(3)} / ${minHackDifficulty(ns, host).toString().padStart(2)}`,
+        `${Math.round(hackDifficulty(ns, host)).toString().padStart(3)} / ${Math.round(minHackDifficulty(ns, host)).toString().padStart(2)}`,
         // money
         `${barString(moneyAvailable(ns, host), maxMoney(ns, host))}` +
         ` ${ns.formatNumber(moneyAvailable(ns, host)).padStart(8)} / ${ns.formatNumber(maxMoney(ns, host)).padStart(8)}`,

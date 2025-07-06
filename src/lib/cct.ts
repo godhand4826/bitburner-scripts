@@ -484,7 +484,7 @@ export function hammingCodesIntegerToEncodedBinary(n: number) {
   // helper functions
   const parityBits = (dataBits: number) => {
     let m = 0;
-    while ((1 << m) - m - 1 <= dataBits) {
+    while ((1 << m) - m - 1 < dataBits) {
       m += 1;
     }
 

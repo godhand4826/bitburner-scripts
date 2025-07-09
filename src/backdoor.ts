@@ -9,10 +9,9 @@ export async function main(ns: NS): Promise<void> {
     ns.disableLog('ALL')
     ns.enableLog('singularity.installBackdoor')
 
-    while (list(ns).some(host => !ns.getServer(host).backdoorInstalled)) {
-        const hosts = list(ns, { onlyNuked: true })
+    while (list(ns, { includeNetwork: true, backdoorInstalled: false }).length > 0) {
+        const hosts = list(ns, { includeNetwork: true, nuked: true, backdoorInstalled: false })
             .filter(host =>
-                !ns.getServer(host).backdoorInstalled &&
                 isHackable(ns, host) &&
                 (includeWorldDaemon || host != 'w0r1d_d43m0n')
             )

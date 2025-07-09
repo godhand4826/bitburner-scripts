@@ -1,16 +1,18 @@
 import { NS } from '@ns';
-import { isHacknetServer, isHomeServer, isPurchasedServer } from './server';
+import { isHacknetServer, isHomeServer, isNetwork, isPurchasedServer } from './server';
+import { hasAdminRights, isBackdoorInstalled } from './hack';
 
 export function listAll(ns: NS) {
-  return list(ns, { includeHome: true, includePurchased: true, includeHacknet: true })
+  return list(ns, { includeHome: true, includePurchased: true, includeHacknet: true, includeNetwork: true })
 }
 
 export interface ListOptions {
-  onlyNuked?: boolean
-  onlyBackdoorInstalled?: boolean
   includeHome?: boolean,
   includePurchased?: boolean,
   includeHacknet?: boolean,
+  includeNetwork?: boolean;
+  nuked?: boolean
+  backdoorInstalled?: boolean
 }
 
 export function list(ns: NS, opt: ListOptions = {}) {
@@ -21,19 +23,23 @@ export function list(ns: NS, opt: ListOptions = {}) {
       .concat(host)
   }
 
+  const isIncluded = (host: string) =>
+    (opt.includeHome === true && isHomeServer(host)) ||
+    (opt.includePurchased === true && isPurchasedServer(host)) ||
+    (opt.includeHacknet === true && isHacknetServer(host)) ||
+    (opt.includeNetwork === true && isNetwork(host))
+
+  const filter = (host: string) =>
+    (opt.nuked === undefined || hasAdminRights(ns, host) === opt.nuked) &&
+    (opt.backdoorInstalled === undefined || isBackdoorInstalled(ns, host) === opt.backdoorInstalled)
+
   return _scan('', 'home')
-    .filter(host =>
-      (!opt.onlyNuked || ns.getServer(host).hasAdminRights) &&
-      (!opt.onlyBackdoorInstalled || ns.getServer(host).backdoorInstalled) &&
-      (opt.includeHome || !isHomeServer(host)) &&
-      (opt.includePurchased || !isPurchasedServer(host)) &&
-      (opt.includeHacknet || !isHacknetServer(host))
-    )
+    .filter(host => isIncluded(host) && filter(host))
     .sort(hostCompare)
 }
 
 // home first, hacknet second, purchased third, others order by name (case-insensitive)
-function hostCompare(a: string, b: string): number {
+export function hostCompare(a: string, b: string): number {
   function _normalize(host: string): string {
     return host.toLowerCase()
       .replace(/^home$/g, '\u0000')

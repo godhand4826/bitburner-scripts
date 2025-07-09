@@ -7,6 +7,6 @@ export async function main(ns: NS): Promise<void> {
     const includeHome = (ns.args[1] ?? false) as boolean
     const includeHacknet = (ns.args[2] ?? false) as boolean
 
-    list(ns, { onlyNuked: true, includeHacknet, includeHome, includePurchased })
+    list(ns, { includeHacknet, includeHome, includePurchased, nuked: true })
         .forEach(host => deployShare(ns, host))
 }

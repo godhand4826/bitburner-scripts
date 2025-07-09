@@ -72,3 +72,7 @@ export function isPurchasedServer(host: string): boolean {
 export function isHacknetServer(host: string): boolean {
     return host.startsWith('hacknet-server-')
 }
+
+export function isNetwork(host: string): boolean {
+    return !isHomeServer(host) && !isPurchasedServer(host) && !isHacknetServer(host)
+}

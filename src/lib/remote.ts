@@ -17,7 +17,7 @@ export function scp(ns: NS, files: string | string[], destinations: string[], so
 }
 
 export function syncScripts(ns: NS) {
-    scp(ns, ns.ls('home', '.js'), list(ns, { includePurchased: true, includeHacknet: true }))
+    scp(ns, ns.ls('home', '.js'), list(ns, { includePurchased: true, includeHacknet: true, includeNetwork: true }))
 }
 
 export interface RemoteFile {

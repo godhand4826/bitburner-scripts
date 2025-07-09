@@ -1,19 +1,20 @@
 import { NS } from '@ns';
 import { now } from './time';
 
-export function solve(ns: NS, host: string, cct: string): boolean {
+export function solve(ns: NS, host: string, cct: string, silenceMode = false): boolean {
   const contractType = ns.codingcontract.getContractType(cct, host);
   const contractData = ns.codingcontract.getData(cct, host);
+  const toast = silenceMode ? () => 0 : ns.toast
 
   if (!isSolvable(ns, contractType)) {
-    ns.toast(`No solver for '${contractType}' ${host} ${cct}`, 'warning');
+    toast(`No solver for '${contractType}' ${host} ${cct}`, 'warning');
     return false;
   }
 
   // Save contract description before attempting, as it may destruct (delete itself) after being attempted
   const cctDescription = formatContract(ns, host, cct)
 
-  ns.toast(`Solving '${contractType}' ${host} ${cct}`);
+  toast(`Solving '${contractType}' ${host} ${cct}`);
   const start = now()
   const fn = getSolverFn(ns, contractType);
   const answer = fn(contractData);
@@ -32,14 +33,14 @@ export function solve(ns: NS, host: string, cct: string): boolean {
   }
 
   if (isSuccess) {
-    ns.toast(`Contract solved successfully! ${reward}`);
+    toast(`Contract solved successfully! ${reward}`);
   } else {
     ns.tprint(`Failed to solve contract. Your answer: ${answer}`);
   }
   return isSuccess
 }
 
-export async function integrationTest(ns: NS) {
+export async function integrationTest(ns: NS, loop = 1) {
   let total = 0;
   let pass = 0;
   for (const contractType of ns.codingcontract.getContractTypes()) {
@@ -48,13 +49,15 @@ export async function integrationTest(ns: NS) {
       continue
     }
 
-    const cct = createDummyContract(ns, contractType)
-    const solved = solve(ns, 'home', cct);
+    for (let i = 0; i < loop; i++) {
+      const cct = createDummyContract(ns, contractType)
+      const solved = solve(ns, 'home', cct, true);
 
-    pass += solved ? 1 : 0;
-    total += 1;
+      pass += Number(solved);
+      total += 1;
 
-    await ns.sleep(200);
+      await ns.sleep(0);
+    }
   }
 
   ns.tprint(`cct integration test complete (${pass}/${total})`)

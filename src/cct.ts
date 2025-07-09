@@ -15,7 +15,7 @@ export async function main(ns: NS): Promise<void> {
     const cct = ns.args[2] as string
     solve(ns, host, cct)
   } else if (cmd == 'test') {
-    await integrationTest(ns)
+    await integrationTest(ns, ns.args[1] as number)
   } else if (cmd == 'generate') {
     const typ = ns.args[1] as string
     ns.tprintf(`${typ}: home ${createDummyContract(ns, typ)}`)

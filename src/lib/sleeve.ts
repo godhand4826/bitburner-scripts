@@ -12,7 +12,7 @@ export function autoSetAction(ns: NS) {
             setToShockRecovery(ns, i)
         } else if (sleeve.sync < 100) {
             setToSynchronize(ns, i)
-        } else if (ns.getPlayer().skills.hacking < 150) {
+        } else if (isIdle(ns, i)) {
             setSleeveCourse(ns, i, 'ZB Institute of Technology', 'Computer Science')
         } else if (ns.getPlayer().skills.hacking < 340) {
             if (getBudget(ns) < 50 * m) {
@@ -98,6 +98,11 @@ export function setToGymWorkout(
         ns.toast(`Set task train ${gymType} at ${gymName} for sleeve ${sleeve}`, 'info')
     }
 }
+
+export function isIdle(ns: NS, sleeve: number): boolean {
+    return !ns.sleeve.getTask(sleeve)?.type
+}
+
 export function getSleeveCurrentWorkout(ns: NS, sleeve: number): Workout | undefined {
     const task = ns.sleeve.getTask(sleeve)
     return task?.type == 'CLASS' && (

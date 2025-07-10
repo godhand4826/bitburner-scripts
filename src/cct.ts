@@ -34,7 +34,7 @@ async function loop(ns: NS) {
     for (const cct of ls(ns, '.cct')) {
       solve(ns, cct.host, cct.name)
 
-      await ns.sleep(200)
+      await ns.sleep(0)
     }
 
     await ns.sleep(10 * 1000)

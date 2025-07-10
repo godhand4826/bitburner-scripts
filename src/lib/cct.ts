@@ -1,28 +1,26 @@
 import { NS } from '@ns';
-import { now } from './time';
+import { now, since } from './time';
 
-export function solve(ns: NS, host: string, cct: string, silenceMode = false): boolean {
-  const contractType = ns.codingcontract.getContractType(cct, host);
-  const contractData = ns.codingcontract.getData(cct, host);
-  const toast = silenceMode ? () => 0 : ns.toast
-
-  if (!isSolvable(ns, contractType)) {
-    toast(`No solver for '${contractType}' ${host} ${cct}`, 'warning');
-    return false;
-  }
-
+export function solve(ns: NS, host: string, cct: string, silent = false): boolean {
   // Save contract description before attempting, as it may destruct (delete itself) after being attempted
   const cctDescription = formatContract(ns, host, cct)
+  const contractType = ns.codingcontract.getContractType(cct, host);
+  const contractData = ns.codingcontract.getData(cct, host);
+  const toast = silent ? () => 0 : ns.toast
+
+  if (!isSolvable(ns, contractType)) {
+    ns.tprint(`No solver for '${contractType}' ${host} ${cct}`);
+    return false;
+  }
 
   toast(`Solving '${contractType}' ${host} ${cct}`);
   const start = now()
   const fn = getSolverFn(ns, contractType);
   const answer = fn(contractData);
   const reward = ns.codingcontract.attempt(answer, cct, host);
-  const elapsed = now() - start
-
+  const elapsed = since(start)
   const isSuccess = typeof reward === 'string' && reward.length > 0;
-  const isSlow = elapsed >= 100;
+  const isSlow = elapsed >= 250;
 
   if (!isSuccess || isSlow) {
     ns.tprint(cctDescription);
@@ -41,31 +39,54 @@ export function solve(ns: NS, host: string, cct: string, silenceMode = false): b
 }
 
 export async function integrationTest(ns: NS, loop = 1) {
-  let total = 0;
-  let pass = 0;
-  for (const contractType of ns.codingcontract.getContractTypes()) {
+  const contractTypes = ns.codingcontract.getContractTypes()
+  let ok = true
+  for (let i = 0; i < contractTypes.length; i++) {
+    const contractType = contractTypes[i]
+
     if (!isSolvable(ns, contractType)) {
-      ns.tprint(`Skip '${contractType}' since no solver found`);
+      ns.tprint(`⏭️ (${i + 1}/${contractTypes.length}) Skipping '${contractType}' since no solver found`)
       continue
+    } else {
+      ns.tprint(`🧪 (${i + 1}/${contractTypes.length}) Testing '${contractType}'`)
     }
 
-    for (let i = 0; i < loop; i++) {
-      const cct = createDummyContract(ns, contractType)
+    const ccts = Array(loop).fill(null).map(() => createDummyContract(ns, contractType, true))
+    let passed = 0;
+    const start = now()
+    let max = 0
+    let min = Infinity
+    for (const cct of ccts) {
+      const start = now()
       const solved = solve(ns, 'home', cct, true);
+      const elapsed = since(start)
 
-      pass += Number(solved);
-      total += 1;
+      max = Math.max(max, elapsed)
+      min = Math.min(min, elapsed)
+      passed += Number(solved);
 
       await ns.sleep(0);
     }
+    const elapsed = since(start)
+
+    const status = passed === loop ? '✅' : '❌';
+    ok &&= passed === loop;
+    ns.tprint(`${status} passed ${ns.formatPercent(passed / loop)} of contracts (${passed}/${loop})`);
+    ns.tprint(`⏱️ Solved ${loop} contracts in ${ns.tFormat(elapsed, true)}. Avg: ${ns.tFormat(elapsed / loop, true)}, Min: ${ns.tFormat(min, true)}, Max: ${ns.tFormat(max, true)}`)
   }
 
-  ns.tprint(`cct integration test complete (${pass}/${total})`)
+  if (ok) {
+    ns.tprint(`🚀 All solvers passed. Integration test complete.`)
+  } else {
+    ns.tprint(`❌ Some solvers failed. Integration test complete.`)
+  }
 }
 
-export function createDummyContract(ns: NS, t: string): string {
+export function createDummyContract(ns: NS, t: string, silent = false): string {
   const cct = ns.codingcontract.createDummyContract(t)
-  ns.tprint(`dummy contract '${t}' home ${cct} created`)
+  if (!silent) {
+    ns.tprint(`dummy contract '${t}' home ${cct} created`)
+  }
   return cct
 }
 
@@ -447,37 +468,42 @@ export function sanitizeParenthesesInExpression(s: string) {
   }
 }
 
-export function findAllValidMathExpressions([s, n]: [string, number]) {
-  const result: string[] = [];
-  dfs('', 0, 0, 0)
-  return result
+export function findAllValidMathExpressions([s, n]: [string, number]): string[] {
+  return dfs(0, 0, 0);
 
-  function dfs(expr: string, i: number, value: number, lastOperand: number) {
+  function dfs(i: number, value: number, lastOperand: number): string[] {
     if (i === s.length) {
-      if (value === n) {
-        result.push(expr);
-      }
-      return
+      return value === n ? [''] : [];
     }
 
-    // try all possible digits from s[i:i+1] to s[i:s.length]
+    const result: string[] = [];
+    let v = 0
     for (let j = i; j < s.length; j++) {
-      if (s[i] === '0' && j != i) {
-        // skip leading zero
-        break;
-      }
+      v = v * 10 + Number(s[j])
 
-      const digits = s.substring(i, j + 1);
-      const v = parseInt(digits);
-      if (i == 0) {
-        // can't add any operator before the first digits of the whole expression
-        dfs(`${v}`, j + 1, v, v);
+      if (s[i] === '0' && j !== i) break; // skip leading zero
+
+      const digits = s.slice(i, j + 1);
+
+      if (i === 0) {
+        // first number, can't add operator
+        for (const expr of dfs(j + 1, v, v)) {
+          result.push(digits + expr);
+        }
       } else {
-        dfs(`${expr}+${digits}`, j + 1, value + v, v);
-        dfs(`${expr}-${digits}`, j + 1, value - v, -v);
-        dfs(`${expr}*${digits}`, j + 1, value - lastOperand + lastOperand * v, lastOperand * v);
+        for (const expr of dfs(j + 1, value + v, v)) {
+          result.push(`+${digits}` + expr);
+        }
+        for (const expr of dfs(j + 1, value - v, -v)) {
+          result.push(`-${digits}` + expr);
+        }
+        for (const expr of dfs(j + 1, value - lastOperand + lastOperand * v, lastOperand * v)) {
+          result.push(`*${digits}` + expr);
+        }
       }
     }
+
+    return result;
   }
 }
 

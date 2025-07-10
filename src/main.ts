@@ -5,7 +5,6 @@ import { run as runHacknet } from './hacknet'
 import { run as runGang } from './gang'
 import { run as runFaction } from './faction'
 import { ready } from './lib/cdn'
-import { maxThreads } from './lib/ram'
 import { placeFragments } from './lib/stanek'
 
 export async function main(ns: NS): Promise<void> {
@@ -14,8 +13,8 @@ export async function main(ns: NS): Promise<void> {
   pkill(ns)
   placeFragments(ns)
 
-  ns.run('stanek.js', Math.max(1, maxThreads(ns, 'home', ns.getScriptRam('stanek.js'), Infinity, 470)))
-  ns.run('focus.js', 1)
+  ns.run('stanek.js')
+  ns.run('focus.js', 1, false)
   ns.run('scan.js')
   ns.run('darkweb.js')
   ns.run('nuke.js')

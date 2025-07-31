@@ -14,6 +14,7 @@ export async function main(ns: NS): Promise<void> {
   placeFragments(ns)
 
   ns.run('stanek.js')
+  ns.run('corporation.js')
   ns.run('focus.js', 1, false)
   ns.run('scan.js')
   ns.run('darkweb.js')
